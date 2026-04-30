@@ -3,9 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>ZIP — Pixel Puzzle</title>
+<title>ZIP - Pixel Puzzle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<!-- Favicon gerado dinamicamente (ícone pixelado) -->
+<script>
+  (function() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 32;
+    const ctx = canvas.getContext('2d');
+    // fundo
+    ctx.fillStyle = '#2196f3';
+    ctx.fillRect(0, 0, 32, 32);
+    // borda escura
+    ctx.fillStyle = '#0d47a1';
+    ctx.fillRect(0, 0, 32, 4);
+    ctx.fillRect(0, 0, 4, 32);
+    ctx.fillRect(28, 0, 4, 32);
+    ctx.fillRect(0, 28, 32, 4);
+    // letra Z branca
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 24px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Z', 16, 18);
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.href = canvas.toDataURL();
+    document.head.appendChild(link);
+  })();
+</script>
+
 <style>
 * {
   box-sizing: border-box;
@@ -62,19 +92,36 @@ body {
   transition: background 0.2s, color 0.2s;
 }
 
-.title {
-  font-size: 32px;
-  letter-spacing: 4px;
+/* LOGO ESTILIZADA */
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 5px;
+}
+.logo-icon {
+  font-size: 48px;
+  filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.2));
+}
+.logo-text {
+  font-size: 44px;
+  font-weight: bold;
+  letter-spacing: 6px;
   color: var(--number-bg);
-  text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
-  text-align: center;
+  text-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, var(--number-bg), #ff9800);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: none;
 }
 .title-sub {
   font-size: 8px;
   color: var(--text-light);
   letter-spacing: 2px;
   text-align: center;
-  margin-top: 5px;
+  margin-top: -5px;
 }
 
 .info-bar {
@@ -265,7 +312,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 </head>
 <body>
 
-<div class="title">ZIP</div>
+<!-- NOVA LOGO COM ÍCONE -->
+<div class="logo">
+  <div class="logo-icon">🧩</div>
+  <div class="logo-text">ZIP</div>
+  <div class="logo-icon">📦</div>
+</div>
 <div class="title-sub">PIXEL PUZZLE</div>
 
 <div class="info-bar">
@@ -308,11 +360,6 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   <span class="theme-lbl">🌓 TEMA:</span>
   <button id="themeToggle" class="theme-btn">🌙 MODO ESCURO</button>
 </div>
-
-<!-- <div class="hint">
-  💡 CLIQUE NO 1 E ARRASTE PARA CONECTAR OS NÚMEROS EM ORDEM<br>
-  🎯 PREENCHA TODAS AS CÉLULAS PARA VENCER!
-</div> -->
 
 <div id="howModal" class="modal">
   <div class="modal-content">
@@ -472,7 +519,6 @@ function updateStatusMessage() {
   }
 }
 
-// Funções principais com proteção contra erros
 function startDraw(row, col) {
   try {
     if (game.won || !game.puzzle) return;
@@ -584,7 +630,6 @@ function render() {
   canvas.height = h;
   ctx.clearRect(0, 0, w, h);
 
-  // Células
   for (let r = 0; r < size; r++) {
     for (let c = 0; c < size; c++) {
       const x = c * cellSize, y = r * cellSize;
@@ -599,7 +644,6 @@ function render() {
     }
   }
 
-  // Números (círculo maior + fonte)
   ctx.font = `bold ${Math.floor(cellSize * 0.42)}px "Press Start 2P", monospace`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -620,7 +664,6 @@ function render() {
     ctx.shadowBlur = 0;
   }
 
-  // Barra de progresso
   const total = size * size;
   const filled = game.path.length;
   const percent = (filled / total) * 100;
@@ -633,7 +676,6 @@ function render() {
   updateStatusMessage();
 }
 
-// ========== CARREGAR PUZZLE ==========
 function loadPuzzle() {
   const cfg = GAME_CONFIG[game.difficulty];
   const size = cfg.sizes[Math.min(game.level - 1, cfg.sizes.length - 1)];
@@ -690,7 +732,7 @@ function setupModal() {
   window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
 }
 
-// ========== EVENTOS (CORRIGIDOS) ==========
+// ========== EVENTOS ==========
 function setupEvents() {
   canvas = document.getElementById('gc');
   ctx = canvas.getContext('2d');
@@ -719,9 +761,7 @@ function setupEvents() {
   });
   canvas.addEventListener('mouseup', stopDraw);
   canvas.addEventListener('mouseleave', stopDraw);
-
-  // IMPORTANTE: capturar mouseup no WINDOW para não travar
-  window.addEventListener('mouseup', stopDraw);
+  window.addEventListener('mouseup', stopDraw); // não trava mais
 
   canvas.addEventListener('touchstart', e => {
     e.preventDefault();
@@ -755,7 +795,6 @@ function setupEvents() {
   });
 }
 
-// ========== INICIALIZAÇÃO ==========
 window.addEventListener('load', () => {
   initTheme();
   setupEvents();
