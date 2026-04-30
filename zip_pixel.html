@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>ZIP — Pixel Puzzle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+:root {
+  --bg: #f5f5f5;
+  --surface: #ffffff;
+  --cell: #fafafa;
+  --path: #a5d6a7;
+  --path-dark: #4caf50;
+  --win: #00c853;
+  --text: #333;
+  --text-light: #666;
+  --border: #e0e0e0;
+  --number-bg: #2196f3;
+  --number-text: white;
+  --error: #f44336;
+  --success: #4caf50;
+  --modal-bg: white;
+  --modal-shadow: rgba(0,0,0,0.2);
+}
+
+body.dark {
+  --bg: #1a1a2e;
+  --surface: #16213e;
+  --cell: #0f3460;
+  --path: #2e7d32;
+  --path-dark: #4caf50;
+  --win: #00ffb4;
+  --text: #e0e0e0;
+  --text-light: #aaa;
+  --border: #2a2a4a;
+  --number-bg: #e94560;
+  --number-text: white;
+  --modal-bg: #16213e;
+  --modal-shadow: rgba(0,0,0,0.5);
+}
+
+body {
+  font-family: 'Press Start 2P', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px 16px 40px;
+  gap: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.title {
+  font-size: 32px;
+  letter-spacing: 4px;
+  color: var(--number-bg);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+  text-align: center;
+}
+.title-sub {
+  font-size: 8px;
+  color: var(--text-light);
+  letter-spacing: 2px;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.info-bar {
+  display: flex;
+  gap: 24px;
+  font-size: 9px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 10px 24px;
+  border-radius: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.info-bar .v {
+  color: var(--number-bg);
+  font-weight: bold;
+  margin-left: 6px;
+}
+
+.status {
+  font-size: 8px;
+  padding: 12px;
+  text-align: center;
+  min-height: 55px;
+  background: var(--surface);
+  border-radius: 16px;
+  max-width: 90%;
+  border: 1px solid var(--border);
+}
+.status.on { color: var(--success); }
+.status.win { color: var(--win); animation: blink 0.5s step-end 3; font-weight: bold; }
+.status.error { color: var(--error); animation: shake 0.3s; }
+
+@keyframes blink { 50% { opacity: 0.5; } }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.canvas-frame {
+  background: var(--surface);
+  border: 4px solid var(--border);
+  border-radius: 20px;
+  padding: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  display: inline-block;
+}
+canvas {
+  display: block;
+  cursor: crosshair;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: auto;
+  height: auto;
+  max-width: 100%;
+}
+
+.prog-wrap { width: 100%; max-width: 550px; }
+.prog-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 7px;
+  margin-bottom: 6px;
+  color: var(--text-light);
+}
+.prog-track {
+  height: 14px;
+  background: var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  background: var(--path-dark);
+  transition: width 0.2s;
+}
+.prog-fill.win { background: var(--win); }
+
+.btn-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 12px 0;
+}
+button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 10px 18px;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  transition: all 0.2s;
+  font-weight: bold;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+button:active { transform: scale(0.96); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-y {
+  background: var(--number-bg);
+  color: white;
+  border: none;
+}
+.btn-y:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+.diff-row, .theme-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: var(--surface);
+  padding: 10px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+.diff-lbl, .theme-lbl {
+  font-size: 7px;
+  color: var(--text-light);
+}
+.dbtn, .theme-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 7px 14px;
+  cursor: pointer;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.dbtn.on, .theme-btn.on {
+  background: var(--number-bg);
+  color: white;
+  border-color: var(--number-bg);
+}
+.hint {
+  font-size: 7px;
+  text-align: center;
+  background: rgba(33,150,243,0.1);
+  padding: 10px;
+  border-radius: 14px;
+  color: var(--text-light);
+  max-width: 90%;
+}
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.75);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: var(--modal-bg);
+  color: var(--text);
+  padding: 24px;
+  border-radius: 20px;
+  max-width: 90%;
+  width: 360px;
+  text-align: center;
+  font-size: 9px;
+  line-height: 1.8;
+  border: 2px solid var(--number-bg);
+}
+.modal-content p {
+  margin: 18px 0;
+}
+.close-modal {
+  background: var(--number-bg);
+  color: white;
+  padding: 10px 20px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="title">ZIP</div>
+<div class="title-sub">PIXEL PUZZLE</div>
+
+<div class="info-bar">
+  <div>NÍVEL <span class="v" id="lv">1</span></div>
+  <div>GRADE <span class="v" id="gs">—</span></div>
+  <div>MARCOS <span class="v" id="mk">—</span></div>
+</div>
+
+<div class="status" id="st">CARREGANDO...</div>
+
+<div class="canvas-frame">
+  <canvas id="gc"></canvas>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-head">
+    <span>📊 PROGRESSO</span>
+    <span id="pt">0 / 0</span>
+  </div>
+  <div class="prog-track">
+    <div class="prog-fill" id="pf"></div>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button id="howBtn">❓ COMO JOGAR</button>
+  <button id="undoBtn">↩ DESFAZER</button>
+  <button id="resetBtn">🔄 REINICIAR</button>
+  <button id="nextBtn">⭐ PRÓXIMO NÍVEL</button>
+</div>
+
+<div class="diff-row">
+  <span class="diff-lbl">🎮 DIFICULDADE:</span>
+  <button class="dbtn" data-diff="easy">FÁCIL</button>
+  <button class="dbtn" data-diff="med">MÉDIO</button>
+  <button class="dbtn" data-diff="hard">DIFÍCIL</button>
+</div>
+
+<div class="theme-row">
+  <span class="theme-lbl">🌓 TEMA:</span>
+  <button id="themeToggle" class="theme-btn">🌙 MODO ESCURO</button>
+</div>
+
+<!-- <div class="hint">
+  💡 CLIQUE NO 1 E ARRASTE PARA CONECTAR OS NÚMEROS EM ORDEM<br>
+  🎯 PREENCHA TODAS AS CÉLULAS PARA VENCER!
+</div> -->
+
+<div id="howModal" class="modal">
+  <div class="modal-content">
+    <h3 style="font-size: 12px; margin-bottom: 12px;">📖 COMO JOGAR</h3>
+    <p>1️⃣ Clique no número <strong style="color: var(--number-bg)">1</strong> e arraste o mouse (ou dedo) para desenhar um caminho.</p>
+    <p>2️⃣ Você deve <strong>visitar TODAS as células</strong> do grid, passando em ordem crescente pelos números marcados.</p>
+    <p>3️⃣ Não pode pular células nem passar por cima do próprio caminho (pode voltar, mas corta o traço).</p>
+    <p>4️⃣ O nível só termina quando <strong>100% do grid estiver preenchido</strong> e a ordem dos números estiver correta.</p>
+    <button class="close-modal">FECHAR</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+// ========== TAMANHOS AUMENTADOS ==========
+const CELL_SIZES = { 4: 110, 5: 94, 6: 82, 7: 72 };
+const GAME_CONFIG = {
+  easy: { sizes: [4,4,4,5,5,5,5,6,6,6], waypoints: 0.35 },
+  med:  { sizes: [5,5,5,6,6,6,6,7,7,7], waypoints: 0.28 },
+  hard: { sizes: [6,6,6,7,7,7,7,7,7,7], waypoints: 0.22 }
+};
+
+// Estado global
+let game = {
+  level: 1,
+  difficulty: 'easy',
+  puzzle: null,
+  path: [],
+  drawing: false,
+  won: false,
+  size: 0,
+  numbers: {},
+  maxNumber: 0
+};
+
+let canvas, ctx, cellSize;
+
+// ========== GERADOR DE CAMINHO HAMILTONIANO ==========
+function generateHamiltonianPath(size) {
+  const total = size * size;
+  const visited = Array(size).fill().map(() => Array(size).fill(false));
+  const path = [];
+  
+  function getNeighbors(r,c) {
+    const neigh = [];
+    if (r > 0 && !visited[r-1][c]) neigh.push([r-1,c]);
+    if (r < size-1 && !visited[r+1][c]) neigh.push([r+1,c]);
+    if (c > 0 && !visited[r][c-1]) neigh.push([r,c-1]);
+    if (c < size-1 && !visited[r][c+1]) neigh.push([r,c+1]);
+    return neigh;
+  }
+  
+  function dfs(r,c) {
+    path.push([r,c]);
+    visited[r][c] = true;
+    if (path.length === total) return true;
+    
+    let neighbors = getNeighbors(r,c);
+    for (let i = neighbors.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [neighbors[i], neighbors[j]] = [neighbors[j], neighbors[i]];
+    }
+    
+    for (let [nr,nc] of neighbors) {
+      if (dfs(nr,nc)) return true;
+    }
+    
+    path.pop();
+    visited[r][c] = false;
+    return false;
+  }
+  
+  for (let attempt = 0; attempt < 80; attempt++) {
+    const startRow = Math.floor(Math.random() * size);
+    const startCol = Math.floor(Math.random() * size);
+    if (dfs(startRow, startCol)) return path;
+    path.length = 0;
+    for (let i=0;i<size;i++) visited[i].fill(false);
+  }
+  return null;
+}
+
+function generatePuzzle(size, waypointDensity) {
+  const fullPath = generateHamiltonianPath(size);
+  if (!fullPath) return null;
+  
+  const totalSteps = fullPath.length;
+  let waypointCount = Math.max(3, Math.floor(totalSteps * waypointDensity));
+  waypointCount = Math.min(waypointCount, Math.floor(totalSteps / 2));
+  
+  const indices = [0];
+  const step = (totalSteps - 1) / (waypointCount - 1);
+  for (let i = 1; i < waypointCount - 1; i++) {
+    let idx = Math.round(i * step);
+    idx = Math.max(indices[i-1] + 2, Math.min(totalSteps - (waypointCount - i), idx));
+    indices.push(idx);
+  }
+  indices.push(totalSteps - 1);
+  const unique = [...new Set(indices)];
+  
+  const numbers = {};
+  for (let i = 0; i < unique.length; i++) {
+    const [r,c] = fullPath[unique[i]];
+    numbers[`${r},${c}`] = i + 1;
+  }
+  const maxNumber = unique.length;
+  
+  return { size, numbers, fullPath, maxNumber };
+}
+
+// ========== LÓGICA DO JOGO ==========
+function getNumberAt(row,col) { return game.puzzle?.numbers[`${row},${col}`]; }
+function getPathIndex(row,col) { return game.path.findIndex(([r,c]) => r===row && c===col); }
+function maxVisitedNumber() {
+  let max = 0;
+  for (let [r,c] of game.path) {
+    let n = getNumberAt(r,c);
+    if (n && n > max) max = n;
+  }
+  return max;
+}
+
+function checkVictory() {
+  if (game.path.length !== game.size * game.size) return false;
+  const visitedNumbers = game.path.map(([r,c]) => getNumberAt(r,c)).filter(v => v !== undefined);
+  const expected = Object.values(game.puzzle.numbers).sort((a,b)=>a-b);
+  if (visitedNumbers.length !== expected.length) return false;
+  for (let i=0;i<visitedNumbers.length;i++) {
+    if (visitedNumbers[i] !== expected[i]) return false;
+  }
+  return true;
+}
+
+function showMessage(msg, type) {
+  const st = document.getElementById('st');
+  st.textContent = msg;
+  st.className = `status ${type}`;
+  if (type !== 'win') {
+    setTimeout(() => {
+      if (document.getElementById('st').textContent === msg) updateStatusMessage();
+    }, 2000);
+  }
+}
+
+function updateStatusMessage() {
+  const st = document.getElementById('st');
+  if (game.won) {
+    st.textContent = `🎉 NÍVEL ${game.level} COMPLETO! PRESSIONE PRÓXIMO 🎉`;
+    st.className = 'status win';
+  } else if (game.path.length) {
+    st.textContent = `🎯 ${game.path.length} / ${game.size*game.size} CÉLULAS PREENCHIDAS`;
+    st.className = 'status on';
+  } else {
+    st.textContent = `🎮 NÍVEL ${game.level} - CLIQUE NO NÚMERO 1`;
+    st.className = 'status';
+  }
+}
+
+// Funções principais com proteção contra erros
+function startDraw(row, col) {
+  try {
+    if (game.won || !game.puzzle) return;
+    const num = getNumberAt(row, col);
+    if (!num) return;
+    if (num !== 1) {
+      showMessage(`❌ COMEÇE PELO NÚMERO 1!`, 'error');
+      return;
+    }
+    game.path = [[row, col]];
+    game.drawing = true;
+    game.won = false;
+    render();
+  } catch (err) {
+    console.error('startDraw error:', err);
+    game.drawing = false;
+  }
+}
+
+function continueDraw(row, col) {
+  try {
+    if (!game.drawing || game.won || !game.puzzle) return;
+
+    const currentMax = maxVisitedNumber();
+    if (currentMax === game.maxNumber) {
+      showMessage(`⛔ VOCÊ JÁ ALCANÇOU O ÚLTIMO NÚMERO!`, 'error');
+      game.drawing = false;
+      return;
+    }
+
+    const idx = getPathIndex(row, col);
+    if (idx !== -1) {
+      if (idx === game.path.length - 1) return;
+      game.path = game.path.slice(0, idx + 1);
+      render();
+      return;
+    }
+    if (!game.path.length) return;
+    const [lr, lc] = game.path[game.path.length - 1];
+    if (Math.abs(row - lr) + Math.abs(col - lc) !== 1) return;
+
+    const cellNum = getNumberAt(row, col);
+    const nextExpected = currentMax + 1;
+    if (cellNum && cellNum !== nextExpected) {
+      showMessage(`❌ PRÓXIMO NÚMERO DEVERIA SER ${nextExpected}!`, 'error');
+      return;
+    }
+
+    game.path.push([row, col]);
+    if (checkVictory()) {
+      game.won = true;
+      game.drawing = false;
+      showMessage(`🎉 PARABÉNS! VENCEU O NÍVEL ${game.level}! 🎉`, 'win');
+    }
+    render();
+  } catch (err) {
+    console.error('continueDraw error:', err);
+    game.drawing = false;
+  }
+}
+
+function stopDraw() {
+  game.drawing = false;
+}
+
+function undo() {
+  if (game.won) return;
+  if (game.path.length) game.path.pop();
+  render();
+  updateStatusMessage();
+}
+
+function reset() {
+  game.path = [];
+  game.won = false;
+  game.drawing = false;
+  render();
+  showMessage(`🔄 JOGO REINICIADO!`, 'normal');
+}
+
+function nextLevel() {
+  const total = game.size * game.size;
+  const filled = game.path.length;
+  if (!game.won && filled > 0 && filled !== total) {
+    if (!confirm(`Nível incompleto (${filled}/${total}). Avançar mesmo assim?`)) return;
+  }
+  game.level++;
+  loadPuzzle();
+}
+
+function setDifficulty(diff) {
+  if (game.difficulty === diff) return;
+  game.difficulty = diff;
+  game.level = 1;
+  document.querySelectorAll('.dbtn').forEach(btn => {
+    btn.classList.toggle('on', btn.dataset.diff === diff);
+  });
+  loadPuzzle();
+  showMessage(`📊 DIFICULDADE: ${diff.toUpperCase()}`, 'normal');
+}
+
+// ========== RENDERIZAÇÃO ==========
+function render() {
+  if (!game.puzzle) return;
+  const size = game.size;
+  const w = size * cellSize;
+  const h = size * cellSize;
+  canvas.width = w;
+  canvas.height = h;
+  ctx.clearRect(0, 0, w, h);
+
+  // Células
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      const x = c * cellSize, y = r * cellSize;
+      const inPath = getPathIndex(r, c) !== -1;
+      if (game.won && inPath) ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--win').trim() || '#00c853';
+      else if (inPath) ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--path').trim() || '#a5d6a7';
+      else ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--cell').trim() || '#fafafa';
+      ctx.fillRect(x, y, cellSize, cellSize);
+      ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--border').trim() || '#ddd';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x, y, cellSize, cellSize);
+    }
+  }
+
+  // Números (círculo maior + fonte)
+  ctx.font = `bold ${Math.floor(cellSize * 0.42)}px "Press Start 2P", monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const radius = cellSize * 0.32;
+  for (let [coord, num] of Object.entries(game.puzzle.numbers)) {
+    const [r, c] = coord.split(',').map(Number);
+    const x = c * cellSize + cellSize / 2;
+    const y = r * cellSize + cellSize / 2;
+    const inPath = getPathIndex(r, c) !== -1;
+    ctx.fillStyle = inPath ? '#2e7d32' : getComputedStyle(document.body).getPropertyValue('--number-bg').trim() || '#2196f3';
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'white';
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 3;
+    ctx.fillText(num.toString(), x, y + 1);
+    ctx.shadowBlur = 0;
+  }
+
+  // Barra de progresso
+  const total = size * size;
+  const filled = game.path.length;
+  const percent = (filled / total) * 100;
+  const pf = document.getElementById('pf');
+  pf.style.width = `${percent}%`;
+  if (game.won) pf.classList.add('win');
+  else pf.classList.remove('win');
+  document.getElementById('pt').innerText = `${filled}/${total}`;
+  document.getElementById('undoBtn').disabled = (filled === 0 || game.won);
+  updateStatusMessage();
+}
+
+// ========== CARREGAR PUZZLE ==========
+function loadPuzzle() {
+  const cfg = GAME_CONFIG[game.difficulty];
+  const size = cfg.sizes[Math.min(game.level - 1, cfg.sizes.length - 1)];
+  const wayDensity = cfg.waypoints;
+  showMessage(`🎲 GERANDO NÍVEL ${game.level}...`, 'normal');
+  setTimeout(() => {
+    const puzzle = generatePuzzle(size, wayDensity);
+    if (!puzzle) {
+      showMessage(`❌ ERRO! Tentando novamente...`, 'error');
+      setTimeout(() => loadPuzzle(), 100);
+      return;
+    }
+    game.puzzle = puzzle;
+    game.size = size;
+    game.path = [];
+    game.won = false;
+    game.drawing = false;
+    game.maxNumber = puzzle.maxNumber;
+    cellSize = CELL_SIZES[size] || 72;
+    document.getElementById('lv').innerText = game.level;
+    document.getElementById('gs').innerText = `${size}×${size}`;
+    document.getElementById('mk').innerText = Object.keys(puzzle.numbers).length;
+    render();
+  }, 10);
+}
+
+// ========== TEMA ==========
+function initTheme() {
+  const saved = localStorage.getItem('zip-theme');
+  if (saved === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('themeToggle').innerHTML = '☀️ MODO CLARO';
+  } else {
+    document.body.classList.remove('dark');
+    document.getElementById('themeToggle').innerHTML = '🌙 MODO ESCURO';
+  }
+}
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('zip-theme', isDark ? 'dark' : 'light');
+  const btn = document.getElementById('themeToggle');
+  btn.innerHTML = isDark ? '☀️ MODO CLARO' : '🌙 MODO ESCURO';
+  if (game.puzzle) render();
+}
+
+// ========== MODAL ==========
+function setupModal() {
+  const modal = document.getElementById('howModal');
+  const btn = document.getElementById('howBtn');
+  const close = document.querySelector('.close-modal');
+  btn.onclick = () => modal.style.display = 'flex';
+  close.onclick = () => modal.style.display = 'none';
+  window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+}
+
+// ========== EVENTOS (CORRIGIDOS) ==========
+function setupEvents() {
+  canvas = document.getElementById('gc');
+  ctx = canvas.getContext('2d');
+
+  const getCellCoord = (clientX, clientY) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (clientX - rect.left) * scaleX;
+    const y = (clientY - rect.top) * scaleY;
+    const row = Math.floor(y / cellSize);
+    const col = Math.floor(x / cellSize);
+    if (row >= 0 && row < game.size && col >= 0 && col < game.size) return [row, col];
+    return null;
+  };
+
+  canvas.addEventListener('mousedown', e => {
+    e.preventDefault();
+    const coord = getCellCoord(e.clientX, e.clientY);
+    if (coord) startDraw(...coord);
+  });
+  canvas.addEventListener('mousemove', e => {
+    if (!game.drawing) return;
+    const coord = getCellCoord(e.clientX, e.clientY);
+    if (coord) continueDraw(...coord);
+  });
+  canvas.addEventListener('mouseup', stopDraw);
+  canvas.addEventListener('mouseleave', stopDraw);
+
+  // IMPORTANTE: capturar mouseup no WINDOW para não travar
+  window.addEventListener('mouseup', stopDraw);
+
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const coord = getCellCoord(touch.clientX, touch.clientY);
+    if (coord) startDraw(...coord);
+  });
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!game.drawing) return;
+    const touch = e.touches[0];
+    const coord = getCellCoord(touch.clientX, touch.clientY);
+    if (coord) continueDraw(...coord);
+  });
+  canvas.addEventListener('touchend', stopDraw);
+  canvas.addEventListener('touchcancel', stopDraw);
+
+  document.getElementById('undoBtn').onclick = undo;
+  document.getElementById('resetBtn').onclick = reset;
+  document.getElementById('nextBtn').onclick = nextLevel;
+  document.querySelectorAll('.dbtn').forEach(btn => {
+    btn.onclick = () => setDifficulty(btn.dataset.diff);
+  });
+  document.getElementById('themeToggle').onclick = toggleTheme;
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'z' || e.key === 'Z') undo();
+    if (e.key === 'r' || e.key === 'R') reset();
+    if (e.key === 'n' || e.key === 'N') nextLevel();
+    if (e.key === 'Escape') stopDraw();
+  });
+}
+
+// ========== INICIALIZAÇÃO ==========
+window.addEventListener('load', () => {
+  initTheme();
+  setupEvents();
+  setupModal();
+  loadPuzzle();
+});
+</script>
+</body>
+</html>
