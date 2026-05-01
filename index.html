@@ -162,60 +162,76 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 .win-time {font-size:26px;color:var(--number-bg);margin:10px 0;}
 .win-record{font-size:8px;color:#ff9800;margin-bottom:16px;min-height:18px;}
 .win-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px;}
+
+/* ── CONFIRM MODAL ── */
+.confirm-btns{display:flex;gap:10px;justify-content:center;margin-top:20px;}
+.btn-confirm-yes{font-family:'Press Start 2P',monospace;font-size:8px;background:var(--error);color:#fff;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;transition:all .2s;}
+.btn-confirm-yes:hover{filter:brightness(1.1);transform:translateY(-2px);}
+.btn-confirm-no{font-family:'Press Start 2P',monospace;font-size:8px;background:var(--surface);color:var(--text);border:1px solid var(--border);padding:10px 20px;border-radius:10px;cursor:pointer;transition:all .2s;}
+.btn-confirm-no:hover{background:var(--border);}
+
+/* ── SHARE ── */
+.btn-share{background:linear-gradient(135deg,#00897b,#00bfa5);color:#fff;border:none;}
+.btn-share:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-2px);}
+#shareToast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:12px 24px;border-radius:12px;font-family:'Press Start 2P',monospace;font-size:7px;z-index:2000;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.3);}
+body.dark #shareToast{background:#e0e0e0;color:#111;}
+#shareToast.show{opacity:1;}
 </style>
 </head>
 <body>
 
 <!-- ══════════════════════ MENU ══════════════════════ -->
-<div id="menuScreen" class="screen">
-  <div class="logo">
-    <div class="logo-icon">🧩</div>
+<div id="menuScreen" class="screen" role="main" aria-label="Menu principal">
+  <div class="logo" role="img" aria-label="ZIP Pixel Puzzle">
+    <div class="logo-icon" aria-hidden="true">🧩</div>
     <div class="logo-text">ZIP</div>
-    <div class="logo-icon">📦</div>
+    <div class="logo-icon" aria-hidden="true">📦</div>
   </div>
-  <div class="title-sub">PIXEL PUZZLE</div>
+  <div class="title-sub" aria-hidden="true">PIXEL PUZZLE</div>
 
-  <div class="menu-btns">
-    <button id="playBtn"    class="menu-btn primary">▶ JOGAR</button>
-    <button id="dailyBtn"   class="menu-btn daily"  >📅 DESAFIO DO DIA</button>
-    <button id="howMenuBtn" class="menu-btn"         >❓ COMO JOGAR</button>
-  </div>
+  <nav class="menu-btns" aria-label="Navegação principal">
+    <button id="playBtn"    class="menu-btn primary" aria-label="Jogar no modo livre">▶ JOGAR</button>
+    <button id="dailyBtn"   class="menu-btn daily"   aria-label="Desafio do dia">📅 DESAFIO DO DIA</button>
+    <button id="howMenuBtn" class="menu-btn"          aria-label="Como jogar — abre instruções">❓ COMO JOGAR</button>
+  </nav>
 
-  <div class="menu-settings">
+  <div class="menu-settings" role="region" aria-label="Configurações">
     <div class="setting-row">
-      <span class="setting-lbl">🌓 TEMA</span>
-      <button id="themeToggle" class="dbtn">🌙 ESCURO</button>
+      <span class="setting-lbl" id="lbl-theme">🌓 TEMA</span>
+      <button id="themeToggle" class="dbtn" aria-labelledby="lbl-theme" aria-pressed="false">🌙 ESCURO</button>
     </div>
     <div class="setting-row">
-      <span class="setting-lbl">🔊 SOM</span>
-      <button id="soundToggle" class="dbtn on">✔ LIGADO</button>
+      <span class="setting-lbl" id="lbl-sound">🔊 SOM</span>
+      <button id="soundToggle" class="dbtn on" aria-labelledby="lbl-sound" aria-pressed="true">✔ LIGADO</button>
     </div>
   </div>
 
-  <div id="dailyDoneNote" class="daily-done-note" style="display:none"></div>
-  <div class="menu-version">v2.0</div>
+  <div id="dailyDoneNote" class="daily-done-note" style="display:none" aria-live="polite"></div>
+  <div class="menu-version" aria-label="Versão 2.0">v2.0</div>
 </div>
 
 <!-- ══════════════════════ JOGO ══════════════════════ -->
-<div id="gameScreen" class="screen" style="display:none">
+<div id="gameScreen" class="screen" role="main" aria-label="Tela do jogo" style="display:none">
 
   <div class="game-topbar">
-    <button id="menuBtn" class="back-btn">⬅ MENU</button>
-    <div id="dailyBadge" class="daily-badge" style="display:none">📅 DIÁRIO</div>
+    <button id="menuBtn" class="back-btn" aria-label="Voltar ao menu">⬅ MENU</button>
+    <div id="dailyBadge" class="daily-badge" style="display:none" aria-label="Modo desafio diário">📅 DIÁRIO</div>
   </div>
 
-  <div class="info-bar">
+  <div class="info-bar" role="group" aria-label="Informações do nível">
     <div>NÍVEL <span class="v" id="lv">1</span></div>
     <div>GRADE <span class="v" id="gs">—</span></div>
     <div>MARCOS <span class="v" id="mk">—</span></div>
-    <div>⏱ <span class="v" id="tm">0:00</span></div>
-    <div>🏆 <span class="v" id="bt">—</span></div>
+    <div>⏱ <span class="v" id="tm" aria-label="Tempo">0:00</span></div>
+    <div>🏆 <span class="v" id="bt" aria-label="Melhor tempo">—</span></div>
   </div>
 
-  <div class="status" id="st">CARREGANDO...</div>
+  <div class="status" id="st" role="status" aria-live="polite">CARREGANDO...</div>
 
   <div class="canvas-frame">
-    <canvas id="gc"></canvas>
+    <canvas id="gc"
+      aria-label="Grade do puzzle — clique no 1 e arraste para desenhar o caminho"
+      tabindex="0"></canvas>
   </div>
 
   <div class="prog-wrap">
@@ -223,49 +239,69 @@ button:disabled{opacity:.5;cursor:not-allowed;}
       <span>📊 PROGRESSO</span>
       <span id="pt">0 / 0</span>
     </div>
-    <div class="prog-track">
+    <div class="prog-track"
+         role="progressbar"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
+         aria-label="Progresso do nível"
+         id="progBar">
       <div class="prog-fill" id="pf"></div>
     </div>
   </div>
 
-  <div class="btn-row">
-    <button id="undoBtn">↩ DESFAZER</button>
-    <button id="resetBtn">🔄 REINICIAR</button>
-    <button id="nextBtn">⭐ PRÓXIMO</button>
+  <div class="btn-row" role="toolbar" aria-label="Controles do jogo">
+    <button id="undoBtn"  aria-label="Desfazer último passo (tecla Z)">↩ DESFAZER</button>
+    <button id="resetBtn" aria-label="Reiniciar nível (tecla R)">🔄 REINICIAR</button>
+    <button id="nextBtn"  aria-label="Próximo nível (tecla N)">⭐ PRÓXIMO</button>
   </div>
 
-  <div id="diffRow" class="diff-row">
+  <div id="diffRow" class="diff-row" role="group" aria-label="Selecionar dificuldade">
     <span class="diff-lbl">🎮 DIFICULDADE:</span>
-    <button class="dbtn" data-diff="easy">FÁCIL</button>
-    <button class="dbtn" data-diff="med">MÉDIO</button>
-    <button class="dbtn" data-diff="hard">DIFÍCIL</button>
+    <button class="dbtn" data-diff="easy" aria-pressed="false">FÁCIL</button>
+    <button class="dbtn" data-diff="med"  aria-pressed="false">MÉDIO</button>
+    <button class="dbtn" data-diff="hard" aria-pressed="false">DIFÍCIL</button>
   </div>
 </div>
 
 <!-- ══════════════════════ MODAIS ══════════════════════ -->
-<div id="howModal" class="modal">
+<div id="howModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="howTitle">
   <div class="modal-content">
-    <h3 style="font-size:12px;margin-bottom:12px;">📖 COMO JOGAR</h3>
+    <h3 id="howTitle" style="font-size:12px;margin-bottom:12px;">📖 COMO JOGAR</h3>
     <p>1️⃣ Clique no número <strong style="color:var(--number-bg)">1</strong> e arraste para desenhar um caminho.</p>
     <p>2️⃣ Você deve <strong>visitar TODAS as células</strong> do grid, passando pelos números em ordem crescente.</p>
     <p>3️⃣ Não pode pular células nem cruzar o próprio caminho (pode voltar, mas corta o traço).</p>
     <p>4️⃣ O nível termina quando <strong>100% do grid estiver preenchido</strong> com os números em ordem.</p>
     <p style="font-size:7px;color:var(--text-light);">⌨️ Z desfaz · R reinicia · N próximo · ESC cancela</p>
-    <button class="close-modal">FECHAR</button>
+    <button class="close-modal" aria-label="Fechar instruções">FECHAR</button>
   </div>
 </div>
 
-<div id="winOverlay">
-  <div class="win-card">
-    <div class="win-title"  id="winTitle">🎉 NÍVEL COMPLETO!</div>
-    <div class="win-time"   id="winTime" >0:00</div>
-    <div class="win-record" id="winRecord"></div>
-    <div class="win-btns">
-      <button id="winNextBtn" class="btn-y">⭐ PRÓXIMO</button>
-      <button id="winMenuBtn">🏠 MENU</button>
+<!-- ── CONFIRM MODAL (substitui confirm() nativo) ── -->
+<div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmMsg">
+  <div class="modal-content">
+    <p id="confirmMsg" style="margin-bottom:4px;line-height:2;"></p>
+    <div class="confirm-btns">
+      <button id="confirmYes" class="btn-confirm-yes" aria-label="Confirmar e avançar">✔ SIM</button>
+      <button id="confirmNo"  class="btn-confirm-no"  aria-label="Cancelar">✖ NÃO</button>
     </div>
   </div>
 </div>
+
+<!-- ── WIN OVERLAY ── -->
+<div id="winOverlay" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+  <div class="win-card">
+    <div class="win-title"  id="winTitle">🎉 NÍVEL COMPLETO!</div>
+    <div class="win-time"   id="winTime" aria-label="Tempo final">0:00</div>
+    <div class="win-record" id="winRecord" aria-live="polite"></div>
+    <div class="win-btns">
+      <button id="winNextBtn"  class="btn-y"     aria-label="Próximo nível">⭐ PRÓXIMO</button>
+      <button id="winShareBtn" class="btn-share" aria-label="Compartilhar resultado" style="display:none">📤 COMPARTILHAR</button>
+      <button id="winMenuBtn"                    aria-label="Voltar ao menu">🏠 MENU</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SHARE TOAST ── -->
+<div id="shareToast" role="alert" aria-live="assertive"></div>
 
 <!-- ══════════════════════ SCRIPT ══════════════════════ -->
 <script>
@@ -281,7 +317,13 @@ const GAME_CONFIG = {
 const DAILY_CFG = { size:6, waypoints:0.28 };
 
 // ═══════ ESTADO ═══════
-let game = { level:1, difficulty:'easy', puzzle:null, path:[], drawing:false, won:false, size:0, maxNumber:0, isDaily:false };
+// ⚡ pathSet: Set auxiliar para checagens O(1) em isInPath()
+let game = {
+  level:1, difficulty:'easy', puzzle:null,
+  path:[], pathSet:new Set(),
+  drawing:false, won:false, size:0, maxNumber:0, isDaily:false,
+  lastSecs:0, lastIsRecord:false
+};
 let canvas, ctx, cellSize;
 
 // ═══════ RNG SEMEÁVEL (Mulberry32) ═══════
@@ -426,10 +468,30 @@ function generatePuzzle(size, density, rng=Math.random) {
   return { size, numbers, fullPath:fp, maxNumber:unique.length };
 }
 
+// ═══════ 🧵 WEB WORKER PARA GERAÇÃO ═══════
+// Extrai o código das funções via .toString() para evitar duplicação
+function createPuzzleWorker() {
+  const src =
+    createSeededRng.toString() + '\n' +
+    generateHamiltonianPath.toString() + '\n' +
+    generatePuzzle.toString() + '\n' +
+    `self.onmessage=function(e){
+      const {size,density,seed}=e.data;
+      const rng=seed!=null?createSeededRng(seed):Math.random;
+      self.postMessage(generatePuzzle(size,density,rng));
+    };`;
+  return new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));
+}
+
 // ═══════ LÓGICA ═══════
 function getNumberAt(r,c){ return game.puzzle?.numbers[`${r},${c}`]; }
 function getPathIndex(r,c){ return game.path.findIndex(([pr,pc])=>pr===r&&pc===c); }
+
+// ⚡ Checagem O(1) — usa pathSet em vez de findIndex
+function isInPath(r,c){ return game.pathSet.has(`${r},${c}`); }
+
 function maxVisitedNumber(){ let max=0; for(const [r,c] of game.path){ const n=getNumberAt(r,c); if(n&&n>max) max=n; } return max; }
+
 function checkVictory(){
   if(game.path.length!==game.size*game.size) return false;
   const sorted=Object.entries(game.puzzle.numbers).sort(([,a],[,b])=>a-b).map(([k])=>k);
@@ -437,6 +499,7 @@ function checkVictory(){
   for(const coord of sorted){ const [r,c]=coord.split(',').map(Number),i=getPathIndex(r,c); if(i===-1||i<=last) return false; last=i; }
   return true;
 }
+
 function showMessage(msg,type){ const st=document.getElementById('st'); st.textContent=msg; st.className=`status ${type}`; if(type!=='win') setTimeout(()=>{ if(st.textContent===msg) updateStatusMsg(); },2000); }
 function updateStatusMsg(){
   const st=document.getElementById('st'); if(!st) return;
@@ -450,7 +513,10 @@ function startDraw(row,col){
     if(game.won||!game.puzzle) return;
     const num=getNumberAt(row,col); if(!num) return;
     if(num!==1){ showMessage('❌ COMEÇE PELO NÚMERO 1!','error'); audio.error(); return; }
-    game.path=[[row,col]]; game.drawing=true; game.won=false;
+    // ⚡ Inicializa path e pathSet juntos
+    game.path=[[row,col]];
+    game.pathSet=new Set([`${row},${col}`]);
+    game.drawing=true; game.won=false;
     timer.start(); audio.step(); render();
   }catch(e){ game.drawing=false; }
 }
@@ -458,20 +524,38 @@ function startDraw(row,col){
 function continueDraw(row,col){
   try{
     if(!game.drawing||game.won||!game.puzzle) return;
-    const curMax=maxVisitedNumber();
-    if(curMax===game.maxNumber){ showMessage('⛔ JÁ ALCANÇOU O ÚLTIMO NÚMERO!','error'); game.drawing=false; return; }
+
     const idx=getPathIndex(row,col);
-    if(idx!==-1){ if(idx===game.path.length-1) return; game.path=game.path.slice(0,idx+1); render(); return; }
+    if(idx!==-1){
+      // Backtrack: retorna ao ponto clicado e remove células posteriores do Set
+      if(idx===game.path.length-1) return;
+      const removed=game.path.splice(idx+1);           // ⚡ splice in-place
+      removed.forEach(([r,c])=>game.pathSet.delete(`${r},${c}`));
+      render(); return;
+    }
+
     if(!game.path.length) return;
     const [lr,lc]=game.path[game.path.length-1];
     if(Math.abs(row-lr)+Math.abs(col-lc)!==1) return;
-    const cellNum=getNumberAt(row,col), nextExp=curMax+1;
+
+    const cellNum=getNumberAt(row,col);
+    const curMax=maxVisitedNumber();
+    const nextExp=curMax+1;
+
+    // 🐛 FIX: removida a guarda prematura que bloqueava desenho após o último
+    // waypoint — o jogador ainda pode precisar preencher células livres restantes.
+    // Só bloqueia quando tenta pular a ordem dos waypoints numerados.
     if(cellNum&&cellNum!==nextExp){ showMessage(`❌ PRÓXIMO DEVERIA SER ${nextExp}!`,'error'); audio.error(); return; }
+
     game.path.push([row,col]);
+    game.pathSet.add(`${row},${col}`);  // ⚡ mantém Set sincronizado
+
     if(cellNum) audio.waypoint(); else audio.step();
+
     if(checkVictory()){
       game.won=true; game.drawing=false; timer.stop();
       const secs=timer.getSeconds(), isRecord=saveBestTime(secs);
+      game.lastSecs=secs; game.lastIsRecord=isRecord;   // 📤 guarda para share
       updateBestDisplay(); audio.win();
       saveProgress();
       if(game.isDaily) try{ localStorage.setItem(getDailyKey(),String(secs)); }catch(e){}
@@ -483,20 +567,99 @@ function continueDraw(row,col){
 }
 
 function stopDraw(){ game.drawing=false; }
-function undo(){ if(game.won) return; if(game.path.length) game.path.pop(); if(game.path.length===0) timer.reset(); render(); updateStatusMsg(); }
-function reset(){ particles.stop(); game.path=[]; game.won=false; game.drawing=false; timer.reset(); render(); showMessage('🔄 JOGO REINICIADO!','normal'); }
+
+function undo(){
+  if(game.won) return;
+  if(game.path.length){
+    const removed=game.path.pop();
+    if(removed) game.pathSet.delete(`${removed[0]},${removed[1]}`); // ⚡ remove do Set
+  }
+  if(game.path.length===0) timer.reset();
+  render(); updateStatusMsg();
+}
+
+function reset(){
+  particles.stop();
+  game.path=[]; game.pathSet=new Set(); // ⚡ limpa Set
+  game.won=false; game.drawing=false;
+  timer.reset(); render(); showMessage('🔄 JOGO REINICIADO!','normal');
+}
+
 function nextLevel(){
   const total=game.size*game.size, filled=game.path.length;
-  if(!game.won&&filled>0&&filled!==total){ if(!confirm(`Incompleto (${filled}/${total}). Avançar mesmo assim?`)) return; }
+  // 🪟 Usa modal customizado no lugar do confirm() nativo
+  if(!game.won&&filled>0&&filled!==total){
+    showConfirm(`Incompleto (${filled}/${total}). Avançar mesmo assim?`, _doNextLevel);
+    return;
+  }
+  _doNextLevel();
+}
+function _doNextLevel(){
   closeWinOverlay(); particles.stop();
   if(!game.isDaily){ game.level++; saveProgress(); }
   loadPuzzle();
 }
+
 function setDifficulty(diff){
   if(game.difficulty===diff) return;
   game.difficulty=diff; game.level=1;
-  document.querySelectorAll('.dbtn[data-diff]').forEach(b=>b.classList.toggle('on',b.dataset.diff===diff));
+  document.querySelectorAll('.dbtn[data-diff]').forEach(b=>{
+    const on=b.dataset.diff===diff;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-pressed',String(on)); // ♿
+  });
   saveProgress(); loadPuzzle(); showMessage(`📊 DIFICULDADE: ${diff.toUpperCase()}`,'normal');
+}
+
+// ═══════ 🪟 CONFIRM MODAL ═══════
+function showConfirm(msg, onYes){
+  document.getElementById('confirmMsg').textContent=msg;
+  const modal=document.getElementById('confirmModal');
+  modal.style.display='flex';
+  const yes=document.getElementById('confirmYes');
+  const no=document.getElementById('confirmNo');
+  yes.onclick=()=>{ modal.style.display='none'; onYes(); };
+  no.onclick =()=>{ modal.style.display='none'; };
+  yes.focus();
+}
+
+// ═══════ 📤 COMPARTILHAR (Desafio do Dia) ═══════
+function buildShareText(){
+  const d=new Date();
+  const date=`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+  const m=Math.floor(game.lastSecs/60), s=String(game.lastSecs%60).padStart(2,'0');
+
+  // Grade emoji: cada segmento entre waypoints recebe uma cor diferente
+  const NUM_EMOJI=['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
+  const SEG_COLORS=['🟦','🟩','🟨','🟧','🟥','🟪'];
+  const grid=Array.from({length:game.size},()=>Array(game.size).fill('⬛'));
+  let seg=0;
+  for(const [r,c] of game.path){
+    const num=getNumberAt(r,c);
+    if(num){ grid[r][c]=NUM_EMOJI[Math.min(num-1,NUM_EMOJI.length-1)]; seg=num; }
+    else    { grid[r][c]=SEG_COLORS[seg%SEG_COLORS.length]; }
+  }
+  const gridStr=grid.map(row=>row.join('')).join('\n');
+  const recordLine=game.lastIsRecord?'\n🏆 Novo recorde!':'';
+
+  return `🧩 ZIP — Desafio do Dia\n📅 ${date} | ⏱ ${m}:${s}${recordLine}\n\n${gridStr}`;
+}
+
+async function handleShare(){
+  const text=buildShareText();
+  if(navigator.share){ try{ await navigator.share({text}); return; }catch(e){} }
+  try{
+    await navigator.clipboard.writeText(text);
+    showShareToast('📋 Resultado copiado!');
+  }catch(e){
+    showShareToast('❌ Não foi possível copiar.');
+  }
+}
+
+function showShareToast(msg){
+  const t=document.getElementById('shareToast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
 
 // ═══════ WIN OVERLAY ═══════
@@ -505,8 +668,16 @@ function showWinOverlay(secs,isRecord){
   document.getElementById('winTitle').textContent  = game.isDaily?'📅 DIÁRIO COMPLETO!':'🎉 NÍVEL '+game.level+' COMPLETO!';
   document.getElementById('winTime').textContent   = `${m}:${s}`;
   document.getElementById('winRecord').textContent = isRecord?'🏆 NOVO RECORDE!':'';
-  document.getElementById('winNextBtn').style.display = game.isDaily?'none':'';
-  document.getElementById('winOverlay').style.display = 'flex';
+  document.getElementById('winNextBtn').style.display  = game.isDaily?'none':'';
+  document.getElementById('winShareBtn').style.display = game.isDaily?'':'none'; // 📤
+  document.getElementById('winOverlay').style.display  = 'flex';
+  // ♿ foco automático no botão principal
+  setTimeout(()=>{
+    const btn=game.isDaily
+      ? document.getElementById('winShareBtn')
+      : document.getElementById('winNextBtn');
+    btn.focus();
+  }, 50);
 }
 function closeWinOverlay(){ document.getElementById('winOverlay').style.display='none'; }
 
@@ -529,7 +700,8 @@ function render(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   const V=getCSSVars();
   for(let r=0;r<size;r++) for(let c=0;c<size;c++){
-    const x=c*cellSize, y=r*cellSize, inPath=getPathIndex(r,c)!==-1;
+    const x=c*cellSize, y=r*cellSize;
+    const inPath=isInPath(r,c);  // ⚡ O(1) via Set
     ctx.fillStyle=game.won&&inPath?V.win:inPath?V.path:V.cell;
     ctx.fillRect(x,y,cellSize,cellSize);
     ctx.strokeStyle=V.border; ctx.lineWidth=1.5; ctx.strokeRect(x,y,cellSize,cellSize);
@@ -538,7 +710,7 @@ function render(){
   for(const [coord,num] of Object.entries(game.puzzle.numbers)){
     const [r,c]=coord.split(',').map(Number);
     const x=c*cellSize+cellSize/2, y=r*cellSize+cellSize/2;
-    const inPath=getPathIndex(r,c)!==-1, label=num.toString(), digits=label.length;
+    const inPath=isInPath(r,c), label=num.toString(), digits=label.length;  // ⚡
     ctx.fillStyle=inPath?'#2e7d32':V.numberBg;
     if(digits===1){
       ctx.beginPath(); ctx.arc(x,y,cellSize*.30,0,Math.PI*2); ctx.fill();
@@ -558,32 +730,68 @@ function render(){
   const total=size*size, filled=game.path.length;
   const pf=document.getElementById('pf');
   pf.style.width=`${(filled/total)*100}%`; pf.classList.toggle('win',game.won);
+  // ♿ atualiza aria-valuenow da barra de progresso
+  const progBar=document.getElementById('progBar');
+  if(progBar) progBar.setAttribute('aria-valuenow',Math.round((filled/total)*100));
   document.getElementById('pt').innerText=`${filled}/${total}`;
-  document.getElementById('undoBtn').disabled=(filled===0||game.won);
+  const undoBtn=document.getElementById('undoBtn');
+  undoBtn.disabled=(filled===0||game.won);
+  undoBtn.setAttribute('aria-disabled',String(filled===0||game.won)); // ♿
   updateStatusMsg();
 }
 
-// ═══════ CARREGAMENTO ═══════
+// ═══════ 🧵 CARREGAMENTO (via Web Worker) ═══════
 function loadPuzzle(retries=0){
   if(retries>8){ showMessage('❌ ERRO CRÍTICO. Recarregue.','error'); return; }
   particles.stop(); timer.reset(); updateBestDisplay();
-  document.querySelectorAll('.dbtn[data-diff]').forEach(b=>b.classList.toggle('on',b.dataset.diff===game.difficulty));
+  document.querySelectorAll('.dbtn[data-diff]').forEach(b=>{
+    const on=b.dataset.diff===game.difficulty;
+    b.classList.toggle('on',on);
+    b.setAttribute('aria-pressed',String(on)); // ♿
+  });
   document.getElementById('diffRow').style.display    = game.isDaily?'none':'';
   document.getElementById('dailyBadge').style.display = game.isDaily?'':'none';
   document.getElementById('nextBtn').style.display    = game.isDaily?'none':'';
   showMessage(game.isDaily?'🎲 GERANDO DESAFIO DO DIA...':'🎲 GERANDO NÍVEL '+game.level+'...','normal');
+
+  const cfg     = game.isDaily ? DAILY_CFG : GAME_CONFIG[game.difficulty];
+  const size    = game.isDaily ? cfg.size  : cfg.sizes[Math.min(game.level-1,cfg.sizes.length-1)];
+  const density = cfg.waypoints;
+  const seed    = game.isDaily ? getDailySeed() : undefined;
+
+  // Tenta Worker; cai para síncrono se não disponível
+  if(typeof Worker !== 'undefined'){
+    try{
+      const worker=createPuzzleWorker();
+      worker.onmessage=function(e){
+        worker.terminate();
+        const puzzle=e.data;
+        if(!puzzle){ showMessage(`❌ ERRO! Tentando... (${retries+1}/8)`,'error'); setTimeout(()=>loadPuzzle(retries+1),150); return; }
+        _applyPuzzle(puzzle);
+      };
+      worker.onerror=function(){ worker.terminate(); setTimeout(()=>loadPuzzle(retries+1),150); };
+      worker.postMessage({size, density, seed});
+      return;
+    }catch(e){}
+  }
+  // Fallback síncrono
   setTimeout(()=>{
-    let puzzle;
-    if(game.isDaily){ puzzle=generatePuzzle(DAILY_CFG.size,DAILY_CFG.waypoints,createSeededRng(getDailySeed())); }
-    else{ const cfg=GAME_CONFIG[game.difficulty]; puzzle=generatePuzzle(cfg.sizes[Math.min(game.level-1,cfg.sizes.length-1)],cfg.waypoints); }
+    const rng=seed!=null?createSeededRng(seed):Math.random;
+    const puzzle=generatePuzzle(size,density,rng);
     if(!puzzle){ showMessage(`❌ ERRO! Tentando... (${retries+1}/8)`,'error'); setTimeout(()=>loadPuzzle(retries+1),150); return; }
-    game.puzzle=puzzle; game.size=puzzle.size; game.path=[]; game.won=false; game.drawing=false; game.maxNumber=puzzle.maxNumber;
-    cellSize=CELL_SIZES[puzzle.size]||72;
-    document.getElementById('lv').innerText=game.isDaily?'📅':game.level;
-    document.getElementById('gs').innerText=`${puzzle.size}×${puzzle.size}`;
-    document.getElementById('mk').innerText=Object.keys(puzzle.numbers).length;
-    render();
+    _applyPuzzle(puzzle);
   },10);
+}
+
+function _applyPuzzle(puzzle){
+  game.puzzle=puzzle; game.size=puzzle.size;
+  game.path=[]; game.pathSet=new Set();  // ⚡ reseta Set ao carregar puzzle
+  game.won=false; game.drawing=false; game.maxNumber=puzzle.maxNumber;
+  cellSize=CELL_SIZES[puzzle.size]||72;
+  document.getElementById('lv').innerText=game.isDaily?'📅':game.level;
+  document.getElementById('gs').innerText=`${puzzle.size}×${puzzle.size}`;
+  document.getElementById('mk').innerText=Object.keys(puzzle.numbers).length;
+  render();
 }
 
 // ═══════ NAVEGAÇÃO ═══════
@@ -592,6 +800,7 @@ function showMenu(){
   document.getElementById('gameScreen').style.display='none';
   document.getElementById('menuScreen').style.display='';
   refreshDailyNote();
+  document.getElementById('playBtn').focus(); // ♿
 }
 function showGame(daily=false){
   game.isDaily=daily; if(!daily) loadProgress();
@@ -612,13 +821,17 @@ function refreshDailyNote(){
 function initTheme(){
   const dark=localStorage.getItem('zip-theme')==='dark';
   document.body.classList.toggle('dark',dark);
-  document.getElementById('themeToggle').textContent=dark?'☀️ CLARO':'🌙 ESCURO';
+  const btn=document.getElementById('themeToggle');
+  btn.textContent=dark?'☀️ CLARO':'🌙 ESCURO';
+  btn.setAttribute('aria-pressed',String(dark)); // ♿
 }
 function toggleTheme(){
   document.body.classList.toggle('dark');
   const dark=document.body.classList.contains('dark');
   localStorage.setItem('zip-theme',dark?'dark':'light');
-  document.getElementById('themeToggle').textContent=dark?'☀️ CLARO':'🌙 ESCURO';
+  const btn=document.getElementById('themeToggle');
+  btn.textContent=dark?'☀️ CLARO':'🌙 ESCURO';
+  btn.setAttribute('aria-pressed',String(dark)); // ♿
   if(game.puzzle) render();
 }
 
@@ -628,12 +841,31 @@ function initSound(){
   audio.muted=muted;
   const btn=document.getElementById('soundToggle');
   btn.textContent=muted?'✖ MUDO':'✔ LIGADO'; btn.classList.toggle('on',!muted);
+  btn.setAttribute('aria-pressed',String(!muted)); // ♿
 }
 function toggleSound(){
   audio.muted=!audio.muted; localStorage.setItem('zip-sound',audio.muted?'off':'on');
   const btn=document.getElementById('soundToggle');
   btn.textContent=audio.muted?'✖ MUDO':'✔ LIGADO'; btn.classList.toggle('on',!audio.muted);
+  btn.setAttribute('aria-pressed',String(!audio.muted)); // ♿
   if(!audio.muted) audio.step();
+}
+
+// ═══════ ♿ NAVEGAÇÃO POR TECLADO NOS MENUS ═══════
+function setupMenuKeyNav(containerId){
+  const container=document.getElementById(containerId);
+  if(!container) return;
+  container.addEventListener('keydown', e=>{
+    const horiz=e.key==='ArrowRight'||e.key==='ArrowDown';
+    const vert =e.key==='ArrowLeft' ||e.key==='ArrowUp';
+    if(!horiz&&!vert) return;
+    e.preventDefault();
+    const btns=[...container.querySelectorAll('button:not([disabled])')];
+    const idx=btns.indexOf(document.activeElement);
+    if(idx===-1) return;
+    const next=horiz?(idx+1)%btns.length:(idx-1+btns.length)%btns.length;
+    btns[next].focus();
+  });
 }
 
 // ═══════ EVENTOS ═══════
@@ -655,28 +887,48 @@ function setupEvents(){
   canvas.addEventListener('touchend',    stopDraw);
   canvas.addEventListener('touchcancel', stopDraw);
 
-  document.getElementById('undoBtn').onclick  = undo;
-  document.getElementById('resetBtn').onclick = reset;
-  document.getElementById('nextBtn').onclick  = nextLevel;
-  document.getElementById('menuBtn').onclick  = showMenu;
+  document.getElementById('undoBtn').onclick   = undo;
+  document.getElementById('resetBtn').onclick  = reset;
+  document.getElementById('nextBtn').onclick   = nextLevel;
+  document.getElementById('menuBtn').onclick   = showMenu;
   document.querySelectorAll('.dbtn[data-diff]').forEach(b=>{ b.onclick=()=>setDifficulty(b.dataset.diff); });
   document.getElementById('playBtn').onclick    = ()=>showGame(false);
   document.getElementById('dailyBtn').onclick   = ()=>showGame(true);
-  document.getElementById('howMenuBtn').onclick = ()=>{ document.getElementById('howModal').style.display='flex'; };
-  document.getElementById('themeToggle').onclick = toggleTheme;
-  document.getElementById('soundToggle').onclick = toggleSound;
-  document.getElementById('winNextBtn').onclick  = nextLevel;
-  document.getElementById('winMenuBtn').onclick  = ()=>{ closeWinOverlay(); showMenu(); };
+  document.getElementById('howMenuBtn').onclick = ()=>{
+    const m=document.getElementById('howModal'); m.style.display='flex';
+    m.querySelector('.close-modal').focus(); // ♿
+  };
+  document.getElementById('themeToggle').onclick  = toggleTheme;
+  document.getElementById('soundToggle').onclick  = toggleSound;
+  document.getElementById('winNextBtn').onclick   = nextLevel;
+  document.getElementById('winShareBtn').onclick  = handleShare; // 📤
+  document.getElementById('winMenuBtn').onclick   = ()=>{ closeWinOverlay(); showMenu(); };
+
   const hw=document.getElementById('howModal');
   document.querySelector('.close-modal').onclick=()=>hw.style.display='none';
   window.addEventListener('click',e=>{ if(e.target===hw) hw.style.display='none'; });
+
+  // Fecha confirm modal clicando no backdrop
+  const cm=document.getElementById('confirmModal');
+  window.addEventListener('click',e=>{ if(e.target===cm) cm.style.display='none'; });
+
   document.addEventListener('keydown',e=>{
+    // ♿ Confirm modal intercepta Escape e Enter
+    if(cm.style.display==='flex'){
+      if(e.key==='Escape') cm.style.display='none';
+      if(e.key==='Enter') document.getElementById('confirmYes').click();
+      return;
+    }
     if(document.getElementById('gameScreen').style.display==='none') return;
     if(e.key==='z'||e.key==='Z') undo();
     if(e.key==='r'||e.key==='R') reset();
     if(e.key==='n'||e.key==='N') nextLevel();
     if(e.key==='Escape') stopDraw();
   });
+
+  // ♿ Nav por setas em ambos os menus
+  setupMenuKeyNav('menuScreen');
+  setupMenuKeyNav('gameScreen');
 }
 
 // ═══════ INIT ═══════
