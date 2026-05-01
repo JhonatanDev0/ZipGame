@@ -728,27 +728,54 @@ function render() {
     }
   }
 
-  // Renderiza números
-  ctx.font = `bold ${Math.floor(cellSize * 0.42)}px "Press Start 2P", monospace`;
+  // Renderiza números — círculo para 1 dígito, pill para 2+ dígitos
   ctx.textAlign    = 'center';
   ctx.textBaseline = 'middle';
-  const radius = cellSize * 0.32;
 
   for (const [coord, num] of Object.entries(game.puzzle.numbers)) {
     const [r, c] = coord.split(',').map(Number);
     const x = c * cellSize + cellSize / 2;
     const y = r * cellSize + cellSize / 2;
-    const inPath = getPathIndex(r, c) !== -1;
+    const inPath  = getPathIndex(r, c) !== -1;
+    const label   = num.toString();
+    const digits  = label.length;
 
     ctx.fillStyle = inPath ? '#2e7d32' : vars.numberBg;
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fill();
+
+    if (digits === 1) {
+      // Círculo padrão
+      const radius = cellSize * 0.30;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.font = `bold ${Math.floor(cellSize * 0.38)}px "Press Start 2P", monospace`;
+    } else {
+      // Pill: largura proporcional ao número de dígitos, altura fixa
+      const pillH = cellSize * 0.46;
+      const pillW = cellSize * (0.30 + digits * 0.19);
+      const pillR = pillH / 2;
+      const px    = x - pillW / 2;
+      const py    = y - pillH / 2;
+      ctx.beginPath();
+      ctx.moveTo(px + pillR, py);
+      ctx.lineTo(px + pillW - pillR, py);
+      ctx.quadraticCurveTo(px + pillW, py, px + pillW, py + pillR);
+      ctx.lineTo(px + pillW, py + pillH - pillR);
+      ctx.quadraticCurveTo(px + pillW, py + pillH, px + pillW - pillR, py + pillH);
+      ctx.lineTo(px + pillR, py + pillH);
+      ctx.quadraticCurveTo(px, py + pillH, px, py + pillH - pillR);
+      ctx.lineTo(px, py + pillR);
+      ctx.quadraticCurveTo(px, py, px + pillR, py);
+      ctx.closePath();
+      ctx.fill();
+      // Fonte menor para caber na pill
+      ctx.font = `bold ${Math.floor(cellSize * 0.27)}px "Press Start 2P", monospace`;
+    }
 
     ctx.fillStyle   = 'white';
     ctx.shadowColor = 'rgba(0,0,0,0.3)';
     ctx.shadowBlur  = 3;
-    ctx.fillText(num.toString(), x, y + 1);
+    ctx.fillText(label, x, y + 1);
     ctx.shadowBlur = 0;
   }
 
