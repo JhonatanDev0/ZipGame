@@ -3,947 +3,685 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ZIP Puzzle">
 <title>ZIP - Pixel Puzzle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-<!-- Favicon: Grid Path — mini grid 4x4 com caminho hamiltoniano -->
+<!-- ===== FAVICON ===== -->
 <script>
-  (function() {
-    const S = 32, pad = 3, N = 4;
-    const cell = (S - pad * 2) / N;
-    const canvas = document.createElement('canvas');
-    canvas.width = S; canvas.height = S;
-    const ctx = canvas.getContext('2d');
+(function(){
+  const S=32,pad=3,N=4,cell=(S-pad*2)/N;
+  const cv=document.createElement('canvas');cv.width=S;cv.height=S;
+  const c=cv.getContext('2d');
+  c.fillStyle='#1a1a2e';
+  c.beginPath();c.moveTo(5,0);c.lineTo(S-5,0);c.quadraticCurveTo(S,0,S,5);c.lineTo(S,S-5);c.quadraticCurveTo(S,S,S-5,S);c.lineTo(5,S);c.quadraticCurveTo(0,S,0,S-5);c.lineTo(0,5);c.quadraticCurveTo(0,0,5,0);c.closePath();c.fill();
+  for(let r=0;r<N;r++)for(let cc=0;cc<N;cc++){c.fillStyle='#0f3460';c.fillRect(pad+cc*cell+1,pad+r*cell+1,cell-2,cell-2);}
+  const pts=[[0,0],[0,1],[0,2],[0,3],[1,3],[1,2],[1,1],[1,0],[2,0],[2,1],[2,2],[2,3],[3,3],[3,2],[3,1],[3,0]];
+  c.strokeStyle='#4caf50';c.lineWidth=2.2;c.lineCap='round';c.lineJoin='round';
+  c.beginPath();pts.forEach(([r,cc],i)=>{const x=pad+cc*cell+cell/2,y=pad+r*cell+cell/2;i===0?c.moveTo(x,y):c.lineTo(x,y);});c.stroke();
+  [[0,0,1],[0,3,2],[3,3,3],[3,0,4]].forEach(([r,cc,n])=>{
+    const x=pad+cc*cell+cell/2,y=pad+r*cell+cell/2;
+    c.fillStyle=n===1?'#e94560':'#2196f3';c.beginPath();c.arc(x,y,cell*0.34,0,Math.PI*2);c.fill();
+    c.fillStyle='white';c.font=`bold ${Math.ceil(cell*0.45)}px monospace`;c.textAlign='center';c.textBaseline='middle';c.fillText(n,x,y+0.5);
+  });
+  const lnk=document.createElement('link');lnk.rel='icon';lnk.href=cv.toDataURL();document.head.appendChild(lnk);
+})();
+</script>
 
-    // Fundo arredondado
-    ctx.fillStyle = '#1a1a2e';
-    ctx.beginPath();
-    ctx.moveTo(5,0); ctx.lineTo(S-5,0);
-    ctx.quadraticCurveTo(S,0,S,5);
-    ctx.lineTo(S,S-5); ctx.quadraticCurveTo(S,S,S-5,S);
-    ctx.lineTo(5,S); ctx.quadraticCurveTo(0,S,0,S-5);
-    ctx.lineTo(0,5); ctx.quadraticCurveTo(0,0,5,0);
-    ctx.closePath(); ctx.fill();
-
-    // Células do grid
-    for (let r = 0; r < N; r++) {
-      for (let c = 0; c < N; c++) {
-        const x = pad + c * cell, y = pad + r * cell;
-        ctx.fillStyle = '#0f3460';
-        ctx.beginPath();
-        ctx.rect(x + 0.5, y + 0.5, cell - 1, cell - 1);
-        ctx.fill();
-      }
+<!-- ===== PWA MANIFEST DINÂMICO ===== -->
+<script>
+(function(){
+  try {
+    const S=512,pad=Math.round(S*0.09),N=4,cell=(S-pad*2)/N,r16=S*0.14;
+    const cv=document.createElement('canvas');cv.width=S;cv.height=S;
+    const c=cv.getContext('2d');
+    c.fillStyle='#1a1a2e';
+    c.beginPath();c.moveTo(r16,0);c.lineTo(S-r16,0);c.quadraticCurveTo(S,0,S,r16);c.lineTo(S,S-r16);c.quadraticCurveTo(S,S,S-r16,S);c.lineTo(r16,S);c.quadraticCurveTo(0,S,0,S-r16);c.lineTo(0,r16);c.quadraticCurveTo(0,0,r16,0);c.closePath();c.fill();
+    for(let r=0;r<N;r++)for(let cc=0;cc<N;cc++){c.fillStyle='#0f3460';c.fillRect(pad+cc*cell+1,pad+r*cell+1,cell-2,cell-2);}
+    const pts=[[0,0],[0,1],[0,2],[0,3],[1,3],[1,2],[1,1],[1,0],[2,0],[2,1],[2,2],[2,3],[3,3],[3,2],[3,1],[3,0]];
+    c.strokeStyle='#4caf50';c.lineWidth=Math.round(S*0.045);c.lineCap='round';c.lineJoin='round';
+    c.beginPath();pts.forEach(([r,cc],i)=>{const x=pad+cc*cell+cell/2,y=pad+r*cell+cell/2;i===0?c.moveTo(x,y):c.lineTo(x,y);});c.stroke();
+    [[0,0,1,'#e94560'],[0,3,2,'#2196f3'],[3,3,3,'#2196f3'],[3,0,4,'#2196f3']].forEach(([r,cc,n,col])=>{
+      const x=pad+cc*cell+cell/2,y=pad+r*cell+cell/2,dR=cell*0.34,fs=Math.floor(cell*0.45);
+      c.fillStyle=col;c.beginPath();c.arc(x,y,dR,0,Math.PI*2);c.fill();
+      c.fillStyle='white';c.font=`bold ${fs}px monospace`;c.textAlign='center';c.textBaseline='middle';c.fillText(n,x,y+1);
+    });
+    const iconUrl=cv.toDataURL('image/png');
+    const m={name:'ZIP - Pixel Puzzle',short_name:'ZIP',start_url:'.',display:'standalone',
+      background_color:'#1a1a2e',theme_color:'#1a1a2e',
+      icons:[{src:iconUrl,sizes:'512x512',type:'image/png'}]};
+    const blob=new Blob([JSON.stringify(m)],{type:'application/manifest+json'});
+    const lnk=document.createElement('link');lnk.rel='manifest';lnk.href=URL.createObjectURL(blob);document.head.appendChild(lnk);
+    if('serviceWorker' in navigator){
+      const sw=`self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));`;
+      navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'text/javascript'}))).catch(()=>{});
     }
-
-    // Caminho hamiltoniano em S (serpentina)
-    const path = [
-      [0,0],[0,1],[0,2],[0,3],
-      [1,3],[1,2],[1,1],[1,0],
-      [2,0],[2,1],[2,2],[2,3],
-      [3,3],[3,2],[3,1],[3,0]
-    ];
-
-    // Linha do caminho
-    ctx.strokeStyle = '#4caf50';
-    ctx.lineWidth = 2.2;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.beginPath();
-    path.forEach(([r, c], i) => {
-      const x = pad + c * cell + cell / 2;
-      const y = pad + r * cell + cell / 2;
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-
-    // Waypoints: 1, 2, 3, 4
-    const waypoints = [[0,0,1],[0,3,2],[3,3,3],[3,0,4]];
-    waypoints.forEach(([r, c, n]) => {
-      const x = pad + c * cell + cell / 2;
-      const y = pad + r * cell + cell / 2;
-      ctx.fillStyle = n === 1 ? '#e94560' : '#2196f3';
-      ctx.beginPath();
-      ctx.arc(x, y, cell * 0.34, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = 'white';
-      ctx.font = `bold ${Math.ceil(cell * 0.45)}px monospace`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(n, x, y + 0.5);
-    });
-
-    const link = document.createElement('link');
-    link.rel = 'icon'; link.href = canvas.toDataURL();
-    document.head.appendChild(link);
-  })();
+  } catch(e){}
+})();
 </script>
 
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 
-:root {
-  --bg: #f5f5f5;
-  --surface: #ffffff;
-  --cell: #fafafa;
-  --path: #a5d6a7;
-  --path-dark: #4caf50;
-  --win: #00c853;
-  --text: #333;
-  --text-light: #666;
-  --border: #e0e0e0;
-  --number-bg: #2196f3;
-  --number-text: white;
-  --error: #f44336;
-  --success: #4caf50;
-  --modal-bg: white;
-  --modal-shadow: rgba(0,0,0,0.2);
+:root{
+  --bg:#f5f5f5;--surface:#fff;--cell:#fafafa;--path:#a5d6a7;--path-dark:#4caf50;
+  --win:#00c853;--text:#333;--text-light:#666;--border:#e0e0e0;
+  --number-bg:#2196f3;--error:#f44336;--success:#4caf50;--modal-bg:#fff;
 }
+body.dark{
+  --bg:#1a1a2e;--surface:#16213e;--cell:#0f3460;--path:#2e7d32;--path-dark:#4caf50;
+  --win:#00ffb4;--text:#e0e0e0;--text-light:#aaa;--border:#2a2a4a;
+  --number-bg:#e94560;--modal-bg:#16213e;
+}
+body{font-family:'Press Start 2P',monospace;background:var(--bg);color:var(--text);transition:background .2s,color .2s;min-height:100vh;}
 
-body.dark {
-  --bg: #1a1a2e;
-  --surface: #16213e;
-  --cell: #0f3460;
-  --path: #2e7d32;
-  --path-dark: #4caf50;
-  --win: #00ffb4;
-  --text: #e0e0e0;
-  --text-light: #aaa;
-  --border: #2a2a4a;
-  --number-bg: #e94560;
-  --number-text: white;
-  --modal-bg: #16213e;
-  --modal-shadow: rgba(0,0,0,0.5);
-}
+/* ── SCREENS ── */
+.screen{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:20px 16px 40px;gap:14px;width:100%;}
 
-body {
-  font-family: 'Press Start 2P', monospace;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 20px 16px 40px;
-  gap: 15px;
-  transition: background 0.2s, color 0.2s;
-}
+/* ── LOGO ── */
+.logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px;}
+.logo-icon{font-size:42px;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.2));}
+.logo-text{font-size:42px;font-weight:bold;letter-spacing:6px;background:linear-gradient(135deg,var(--number-bg),#ff9800);background-clip:text;-webkit-background-clip:text;color:transparent;}
+.title-sub{font-size:8px;color:var(--text-light);letter-spacing:2px;text-align:center;margin-top:-4px;}
 
-/* LOGO */
-.logo {
-  display: flex; align-items: center; justify-content: center;
-  gap: 12px; margin-bottom: 5px;
-}
-.logo-icon { font-size: 48px; filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.2)); }
-.logo-text {
-  font-size: 44px; font-weight: bold; letter-spacing: 6px;
-  background: linear-gradient(135deg, var(--number-bg), #ff9800);
-  background-clip: text; -webkit-background-clip: text; color: transparent;
-}
-.title-sub {
-  font-size: 8px; color: var(--text-light);
-  letter-spacing: 2px; text-align: center; margin-top: -5px;
-}
+/* ── MENU ── */
+.menu-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;margin-top:6px;}
+.menu-btn{font-family:'Press Start 2P',monospace;font-size:9px;padding:15px 20px;cursor:pointer;border:none;border-radius:14px;transition:all .2s;background:var(--surface);color:var(--text);border:1px solid var(--border);width:100%;}
+.menu-btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12);}
+.menu-btn:active{transform:scale(.97);}
+.menu-btn.primary{background:var(--number-bg);color:#fff;border:none;font-size:11px;}
+.menu-btn.daily{background:linear-gradient(135deg,#6a1b9a,#4a148c);color:#fff;border:none;}
+body.dark .menu-btn.daily{background:linear-gradient(135deg,#9c27b0,#6a1b9a);}
 
-.info-bar {
-  display: flex; gap: 20px; font-size: 9px; flex-wrap: wrap;
-  background: var(--surface); border: 1px solid var(--border);
-  padding: 10px 24px; border-radius: 16px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05); justify-content: center;
-}
-.info-bar .v { color: var(--number-bg); font-weight: bold; margin-left: 6px; }
-.info-bar .timer-warn { color: var(--error) !important; }
+.menu-settings{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 18px;}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.setting-lbl{font-size:7px;color:var(--text-light);}
+.menu-version{font-size:6px;color:var(--text-light);margin-top:2px;}
+.daily-done-note{font-size:7px;text-align:center;padding:8px 14px;border-radius:10px;background:rgba(0,200,83,.12);color:var(--success);max-width:280px;}
 
-.status {
-  font-size: 8px; padding: 12px; text-align: center; min-height: 55px;
-  background: var(--surface); border-radius: 16px; max-width: 90%;
-  border: 1px solid var(--border);
-}
-.status.on    { color: var(--success); }
-.status.win   { color: var(--win); animation: blink 0.5s step-end 3; font-weight: bold; }
-.status.error { color: var(--error); animation: shake 0.3s; }
-.status.normal { color: var(--text); }
+/* ── GAME TOPBAR ── */
+.game-topbar{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:580px;}
+.back-btn{font-family:'Press Start 2P',monospace;font-size:7px;padding:8px 14px;cursor:pointer;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);transition:all .2s;}
+.back-btn:hover{background:var(--border);}
+.daily-badge{font-size:7px;padding:6px 12px;border-radius:10px;background:linear-gradient(135deg,#6a1b9a,#4a148c);color:#fff;animation:pulse 2s ease-in-out infinite;}
+body.dark .daily-badge{background:linear-gradient(135deg,#9c27b0,#6a1b9a);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.72;}}
 
-@keyframes blink { 50% { opacity: 0.5; } }
-@keyframes shake {
-  0%,100% { transform: translateX(0); }
-  25%     { transform: translateX(-4px); }
-  75%     { transform: translateX(4px); }
-}
+/* ── INFO BAR ── */
+.info-bar{display:flex;gap:16px;font-size:9px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);padding:10px 20px;border-radius:16px;box-shadow:0 2px 4px rgba(0,0,0,.05);justify-content:center;}
+.info-bar .v{color:var(--number-bg);font-weight:bold;margin-left:5px;}
+.timer-warn{color:var(--error)!important;}
 
-.canvas-frame {
-  background: var(--surface); border: 4px solid var(--border);
-  border-radius: 20px; padding: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1); display: inline-block;
-}
-canvas {
-  display: block; cursor: crosshair; border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  width: auto; height: auto; max-width: 100%;
-}
+/* ── STATUS ── */
+.status{font-size:8px;padding:12px;text-align:center;min-height:52px;background:var(--surface);border-radius:16px;max-width:90%;border:1px solid var(--border);}
+.status.on    {color:var(--success);}
+.status.win   {color:var(--win);animation:blink .5s step-end 3;font-weight:bold;}
+.status.error {color:var(--error);animation:shake .3s;}
+.status.normal{color:var(--text);}
+@keyframes blink{50%{opacity:.5;}}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
 
-.prog-wrap { width: 100%; max-width: 550px; }
-.prog-head {
-  display: flex; justify-content: space-between;
-  font-size: 7px; margin-bottom: 6px; color: var(--text-light);
-}
-.prog-track { height: 14px; background: var(--border); border-radius: 8px; overflow: hidden; }
-.prog-fill  { height: 100%; background: var(--path-dark); transition: width 0.2s; }
-.prog-fill.win { background: var(--win); }
+/* ── CANVAS ── */
+.canvas-frame{background:var(--surface);border:4px solid var(--border);border-radius:20px;padding:12px;box-shadow:0 8px 20px rgba(0,0,0,.1);display:inline-block;}
+canvas#gc{display:block;cursor:crosshair;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.1);width:auto;height:auto;max-width:100%;}
 
-.btn-row {
-  display: flex; gap: 12px; flex-wrap: wrap;
-  justify-content: center; margin: 12px 0;
-}
-button {
-  font-family: 'Press Start 2P', monospace; font-size: 8px;
-  padding: 10px 18px; cursor: pointer; border: none;
-  border-radius: 10px; transition: all 0.2s; font-weight: bold;
-  background: var(--surface); color: var(--text); border: 1px solid var(--border);
-}
-button:active   { transform: scale(0.96); }
-button:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-y { background: var(--number-bg); color: white; border: none; }
-.btn-y:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-2px); }
+/* ── PROGRESSO ── */
+.prog-wrap{width:100%;max-width:550px;}
+.prog-head{display:flex;justify-content:space-between;font-size:7px;margin-bottom:6px;color:var(--text-light);}
+.prog-track{height:14px;background:var(--border);border-radius:8px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--path-dark);transition:width .2s;}
+.prog-fill.win{background:var(--win);}
 
-.diff-row, .theme-row {
-  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-  justify-content: center; background: var(--surface);
-  padding: 10px 20px; border-radius: 14px; border: 1px solid var(--border);
-}
-.diff-lbl, .theme-lbl { font-size: 7px; color: var(--text-light); }
-.dbtn, .theme-btn {
-  font-family: 'Press Start 2P', monospace; font-size: 7px;
-  padding: 7px 14px; cursor: pointer; background: var(--bg);
-  color: var(--text); border: 1px solid var(--border); border-radius: 8px;
-}
-.dbtn.on, .theme-btn.on {
-  background: var(--number-bg); color: white; border-color: var(--number-bg);
-}
+/* ── BOTÕES ── */
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:6px 0;}
+button{font-family:'Press Start 2P',monospace;font-size:8px;padding:10px 16px;cursor:pointer;border:none;border-radius:10px;transition:all .2s;font-weight:bold;background:var(--surface);color:var(--text);border:1px solid var(--border);}
+button:active{transform:scale(.96);}
+button:disabled{opacity:.5;cursor:not-allowed;}
+.btn-y{background:var(--number-bg);color:#fff;border:none;}
+.btn-y:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-2px);}
+.diff-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;background:var(--surface);padding:10px 18px;border-radius:14px;border:1px solid var(--border);}
+.diff-lbl{font-size:7px;color:var(--text-light);}
+.dbtn{font-family:'Press Start 2P',monospace;font-size:7px;padding:7px 13px;cursor:pointer;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;}
+.dbtn.on{background:var(--number-bg);color:#fff;border-color:var(--number-bg);}
 
-/* MODAL */
-.modal {
-  display: none; position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%; background: rgba(0,0,0,0.75);
-  justify-content: center; align-items: center; z-index: 1000;
-}
-.modal-content {
-  background: var(--modal-bg); color: var(--text); padding: 24px;
-  border-radius: 20px; max-width: 90%; width: 360px;
-  text-align: center; font-size: 9px; line-height: 1.8;
-  border: 2px solid var(--number-bg);
-}
-.modal-content p   { margin: 18px 0; }
-.modal-content .best-times { font-size: 7px; color: var(--text-light); margin-top: 8px; }
-.close-modal {
-  background: var(--number-bg); color: white; padding: 10px 20px;
-  margin-top: 12px; border: none; border-radius: 10px;
-  cursor: pointer; font-size: 8px;
-}
+/* ── MODAL ── */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.78);justify-content:center;align-items:center;z-index:1000;}
+.modal-content{background:var(--modal-bg);color:var(--text);padding:24px;border-radius:20px;max-width:90%;width:360px;text-align:center;font-size:9px;line-height:1.8;border:2px solid var(--number-bg);}
+.modal-content p{margin:14px 0;}
+.close-modal{background:var(--number-bg);color:#fff;padding:10px 20px;margin-top:12px;border:none;border-radius:10px;cursor:pointer;font-size:8px;}
+
+/* ── WIN OVERLAY ── */
+#winOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.82);justify-content:center;align-items:center;z-index:999;}
+.win-card{background:var(--modal-bg);color:var(--text);padding:28px 28px;border-radius:24px;max-width:90%;width:320px;text-align:center;border:3px solid var(--win);}
+.win-title{font-size:12px;color:var(--win);margin-bottom:14px;}
+.win-time {font-size:26px;color:var(--number-bg);margin:10px 0;}
+.win-record{font-size:8px;color:#ff9800;margin-bottom:16px;min-height:18px;}
+.win-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px;}
 </style>
 </head>
 <body>
 
-<div class="logo">
-  <div class="logo-icon">🧩</div>
-  <div class="logo-text">ZIP</div>
-  <div class="logo-icon">📦</div>
-</div>
-<div class="title-sub">PIXEL PUZZLE</div>
-
-<div class="info-bar">
-  <div>NÍVEL <span class="v" id="lv">1</span></div>
-  <div>GRADE <span class="v" id="gs">—</span></div>
-  <div>MARCOS <span class="v" id="mk">—</span></div>
-  <div>⏱ <span class="v" id="tm">0:00</span></div>
-  <div>🏆 <span class="v" id="bt">—</span></div>
-</div>
-
-<div class="status" id="st">CARREGANDO...</div>
-
-<div class="canvas-frame">
-  <canvas id="gc"></canvas>
-</div>
-
-<div class="prog-wrap">
-  <div class="prog-head">
-    <span>📊 PROGRESSO</span>
-    <span id="pt">0 / 0</span>
+<!-- ══════════════════════ MENU ══════════════════════ -->
+<div id="menuScreen" class="screen">
+  <div class="logo">
+    <div class="logo-icon">🧩</div>
+    <div class="logo-text">ZIP</div>
+    <div class="logo-icon">📦</div>
   </div>
-  <div class="prog-track">
-    <div class="prog-fill" id="pf"></div>
+  <div class="title-sub">PIXEL PUZZLE</div>
+
+  <div class="menu-btns">
+    <button id="playBtn"    class="menu-btn primary">▶ JOGAR</button>
+    <button id="dailyBtn"   class="menu-btn daily"  >📅 DESAFIO DO DIA</button>
+    <button id="howMenuBtn" class="menu-btn"         >❓ COMO JOGAR</button>
+  </div>
+
+  <div class="menu-settings">
+    <div class="setting-row">
+      <span class="setting-lbl">🌓 TEMA</span>
+      <button id="themeToggle" class="dbtn">🌙 ESCURO</button>
+    </div>
+    <div class="setting-row">
+      <span class="setting-lbl">🔊 SOM</span>
+      <button id="soundToggle" class="dbtn on">✔ LIGADO</button>
+    </div>
+  </div>
+
+  <div id="dailyDoneNote" class="daily-done-note" style="display:none"></div>
+  <div class="menu-version">v2.0</div>
+</div>
+
+<!-- ══════════════════════ JOGO ══════════════════════ -->
+<div id="gameScreen" class="screen" style="display:none">
+
+  <div class="game-topbar">
+    <button id="menuBtn" class="back-btn">⬅ MENU</button>
+    <div id="dailyBadge" class="daily-badge" style="display:none">📅 DIÁRIO</div>
+  </div>
+
+  <div class="info-bar">
+    <div>NÍVEL <span class="v" id="lv">1</span></div>
+    <div>GRADE <span class="v" id="gs">—</span></div>
+    <div>MARCOS <span class="v" id="mk">—</span></div>
+    <div>⏱ <span class="v" id="tm">0:00</span></div>
+    <div>🏆 <span class="v" id="bt">—</span></div>
+  </div>
+
+  <div class="status" id="st">CARREGANDO...</div>
+
+  <div class="canvas-frame">
+    <canvas id="gc"></canvas>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-head">
+      <span>📊 PROGRESSO</span>
+      <span id="pt">0 / 0</span>
+    </div>
+    <div class="prog-track">
+      <div class="prog-fill" id="pf"></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button id="undoBtn">↩ DESFAZER</button>
+    <button id="resetBtn">🔄 REINICIAR</button>
+    <button id="nextBtn">⭐ PRÓXIMO</button>
+  </div>
+
+  <div id="diffRow" class="diff-row">
+    <span class="diff-lbl">🎮 DIFICULDADE:</span>
+    <button class="dbtn" data-diff="easy">FÁCIL</button>
+    <button class="dbtn" data-diff="med">MÉDIO</button>
+    <button class="dbtn" data-diff="hard">DIFÍCIL</button>
   </div>
 </div>
 
-<div class="btn-row">
-  <button id="howBtn">❓ COMO JOGAR</button>
-  <button id="undoBtn">↩ DESFAZER</button>
-  <button id="resetBtn">🔄 REINICIAR</button>
-  <button id="nextBtn">⭐ PRÓXIMO NÍVEL</button>
-</div>
-
-<div class="diff-row">
-  <span class="diff-lbl">🎮 DIFICULDADE:</span>
-  <button class="dbtn" data-diff="easy">FÁCIL</button>
-  <button class="dbtn" data-diff="med">MÉDIO</button>
-  <button class="dbtn" data-diff="hard">DIFÍCIL</button>
-</div>
-
-<div class="theme-row">
-  <span class="theme-lbl">🌓 TEMA:</span>
-  <button id="themeToggle" class="theme-btn">🌙 MODO ESCURO</button>
-</div>
-
+<!-- ══════════════════════ MODAIS ══════════════════════ -->
 <div id="howModal" class="modal">
   <div class="modal-content">
-    <h3 style="font-size: 12px; margin-bottom: 12px;">📖 COMO JOGAR</h3>
-    <p>1️⃣ Clique no número <strong style="color: var(--number-bg)">1</strong> e arraste o mouse (ou dedo) para desenhar um caminho.</p>
-    <p>2️⃣ Você deve <strong>visitar TODAS as células</strong> do grid, passando em ordem crescente pelos números marcados.</p>
-    <p>3️⃣ Não pode pular células nem passar por cima do próprio caminho (pode voltar, mas corta o traço).</p>
-    <p>4️⃣ O nível só termina quando <strong>100% do grid estiver preenchido</strong> e a ordem dos números estiver correta.</p>
-    <p style="font-size:7px; color: var(--text-light);">
-      ⌨️ Atalhos: <strong>Z</strong> desfaz · <strong>R</strong> reinicia · <strong>N</strong> próximo nível · <strong>ESC</strong> cancela arraste
-    </p>
+    <h3 style="font-size:12px;margin-bottom:12px;">📖 COMO JOGAR</h3>
+    <p>1️⃣ Clique no número <strong style="color:var(--number-bg)">1</strong> e arraste para desenhar um caminho.</p>
+    <p>2️⃣ Você deve <strong>visitar TODAS as células</strong> do grid, passando pelos números em ordem crescente.</p>
+    <p>3️⃣ Não pode pular células nem cruzar o próprio caminho (pode voltar, mas corta o traço).</p>
+    <p>4️⃣ O nível termina quando <strong>100% do grid estiver preenchido</strong> com os números em ordem.</p>
+    <p style="font-size:7px;color:var(--text-light);">⌨️ Z desfaz · R reinicia · N próximo · ESC cancela</p>
     <button class="close-modal">FECHAR</button>
   </div>
 </div>
 
+<div id="winOverlay">
+  <div class="win-card">
+    <div class="win-title"  id="winTitle">🎉 NÍVEL COMPLETO!</div>
+    <div class="win-time"   id="winTime" >0:00</div>
+    <div class="win-record" id="winRecord"></div>
+    <div class="win-btns">
+      <button id="winNextBtn" class="btn-y">⭐ PRÓXIMO</button>
+      <button id="winMenuBtn">🏠 MENU</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ SCRIPT ══════════════════════ -->
 <script>
 "use strict";
 
-// ========== CONFIGURAÇÃO ==========
-const CELL_SIZES = { 4: 110, 5: 94, 6: 82, 7: 72 };
+// ═══════ CONFIGURAÇÃO ═══════
+const CELL_SIZES = { 4:110, 5:94, 6:82, 7:72 };
 const GAME_CONFIG = {
-  easy: { sizes: [4,4,4,5,5,5,5,6,6,6], waypoints: 0.35 },
-  med:  { sizes: [5,5,5,6,6,6,6,7,7,7], waypoints: 0.28 },
-  hard: { sizes: [6,6,6,7,7,7,7,7,7,7], waypoints: 0.22 }
+  easy: { sizes:[4,4,4,5,5,5,5,6,6,6], waypoints:0.35 },
+  med:  { sizes:[5,5,5,6,6,6,6,7,7,7], waypoints:0.28 },
+  hard: { sizes:[6,6,6,7,7,7,7,7,7,7], waypoints:0.22 }
 };
+const DAILY_CFG = { size:6, waypoints:0.28 };
 
-// ========== ESTADO GLOBAL ==========
-let game = {
-  level: 1,
-  difficulty: 'easy',
-  puzzle: null,
-  path: [],
-  drawing: false,
-  won: false,
-  size: 0,
-  maxNumber: 0
-};
-
-// FIX: canvas e ctx declarados uma única vez no escopo global
+// ═══════ ESTADO ═══════
+let game = { level:1, difficulty:'easy', puzzle:null, path:[], drawing:false, won:false, size:0, maxNumber:0, isDaily:false };
 let canvas, ctx, cellSize;
 
-// ========== CRONÔMETRO ==========
-const timer = {
-  startMs: 0,
-  elapsed: 0,
-  intervalId: null,
+// ═══════ RNG SEMEÁVEL (Mulberry32) ═══════
+function createSeededRng(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = Math.imul(s ^ s >>> 15, s | 1);
+    s ^= s + Math.imul(s ^ s >>> 7, s | 61);
+    return ((s ^ s >>> 14) >>> 0) / 0x100000000;
+  };
+}
+function getDailySeed() {
+  const d = new Date();
+  return d.getFullYear() * 10000 + (d.getMonth()+1) * 100 + d.getDate();
+}
+function getDailyKey() {
+  const d = new Date();
+  return `zip-daily-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
 
-  start() {
-    this.startMs = Date.now() - this.elapsed;
-    clearInterval(this.intervalId);
-    this.intervalId = setInterval(() => this.tick(), 500);
+// ═══════ ÁUDIO — Web Audio API ═══════
+const audio = {
+  _ctx: null, muted: false,
+  _init() { if(this._ctx) return; try{ this._ctx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} },
+  _beep(freq, type, dur, gain=0.22, delay=0) {
+    if(this.muted||!freq) return; this._init(); if(!this._ctx) return;
+    const t=this._ctx.currentTime+delay;
+    const o=this._ctx.createOscillator(), g=this._ctx.createGain();
+    o.connect(g); g.connect(this._ctx.destination);
+    o.type=type; o.frequency.setValueAtTime(freq,t);
+    g.gain.setValueAtTime(gain,t); g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    o.start(t); o.stop(t+dur+0.01);
   },
+  step()     { this._beep(380,'sine',0.06,0.12); },
+  waypoint() { [523,659,784].forEach((f,i)=>this._beep(f,'sine',0.12,0.25-i*0.04,i*0.08)); },
+  error()    { this._beep(160,'sawtooth',0.10,0.2); },
+  win()      { [523,659,784,1047,1319].forEach((f,i)=>this._beep(f,'sine',0.22,0.32,i*0.11)); },
+  back()     { this._beep(330,'sine',0.08,0.14); }
+};
 
-  stop() {
-    clearInterval(this.intervalId);
-    this.intervalId = null;
-    this.elapsed = Date.now() - this.startMs;
+// ═══════ PARTÍCULAS ═══════
+const particles = {
+  list:[], animId:null,
+  launch() {
+    this.stop();
+    const W=canvas.width, H=canvas.height;
+    const COLS=['#4caf50','#00e676','#ffeb3b','#2196f3','#e94560','#ff9800','#fff','#00bcd4'];
+    for(let i=0;i<90;i++){
+      const a=Math.random()*Math.PI*2, sp=1.5+Math.random()*6;
+      this.list.push({
+        x: W/2+(Math.random()-.5)*W*.5, y: H/2+(Math.random()-.5)*H*.5,
+        vx:Math.cos(a)*sp, vy:Math.sin(a)*sp-2,
+        life:0.7+Math.random()*0.3, decay:0.010+Math.random()*0.014,
+        size:4+Math.random()*9, color:COLS[Math.floor(Math.random()*COLS.length)],
+        sq:Math.random()>.5
+      });
+    }
+    this._loop();
   },
-
-  reset() {
-    clearInterval(this.intervalId);
-    this.intervalId = null;
-    this.elapsed = 0;
-    this.startMs = 0;
-    this._updateDisplay(0);
-  },
-
-  tick() {
-    const ms = Date.now() - this.startMs;
-    this._updateDisplay(ms);
-  },
-
-  getSeconds() {
-    return Math.floor(this.elapsed / 1000);
-  },
-
-  _updateDisplay(ms) {
-    const s = Math.floor(ms / 1000);
-    const m = Math.floor(s / 60);
-    const ss = String(s % 60).padStart(2, '0');
-    const el = document.getElementById('tm');
-    if (!el) return;
-    el.textContent = `${m}:${ss}`;
-    el.className = (s > 120) ? 'v timer-warn' : 'v';
+  stop() { if(this.animId) cancelAnimationFrame(this.animId); this.animId=null; this.list=[]; },
+  _loop() {
+    render();
+    for(const p of this.list){
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.18; p.vx*=.99; p.life-=p.decay;
+      if(p.life<=0) continue;
+      ctx.globalAlpha=Math.min(1,p.life*1.4); ctx.fillStyle=p.color;
+      const s=p.size*Math.min(1,p.life*1.5);
+      if(p.sq) ctx.fillRect(p.x-s/2,p.y-s/2,s,s);
+      else { ctx.beginPath(); ctx.arc(p.x,p.y,s/2,0,Math.PI*2); ctx.fill(); }
+    }
+    ctx.globalAlpha=1;
+    this.list=this.list.filter(p=>p.life>0);
+    if(this.list.length>0) this.animId=requestAnimationFrame(()=>this._loop());
+    else { this.animId=null; render(); }
   }
 };
 
-// ========== SALVAMENTO DE PROGRESSO ==========
-function saveProgress() {
-  try {
-    localStorage.setItem('zip-save', JSON.stringify({
-      level: game.level,
-      difficulty: game.difficulty
-    }));
-  } catch(e) { /* silencia erros de localStorage em ambientes restritos */ }
-}
-
+// ═══════ PERSISTÊNCIA ═══════
+function saveProgress() { try{ localStorage.setItem('zip-save',JSON.stringify({level:game.level,difficulty:game.difficulty})); }catch(e){} }
 function loadProgress() {
-  try {
-    const raw = localStorage.getItem('zip-save');
-    if (!raw) return;
-    const { level, difficulty } = JSON.parse(raw);
-    if (level && difficulty && GAME_CONFIG[difficulty]) {
-      game.level = Math.max(1, level);
-      game.difficulty = difficulty;
-    }
-  } catch(e) { /* ignora dados corrompidos */ }
+  try{
+    const raw=localStorage.getItem('zip-save'); if(!raw) return;
+    const {level,difficulty}=JSON.parse(raw);
+    if(level&&difficulty&&GAME_CONFIG[difficulty]){ game.level=Math.max(1,level); game.difficulty=difficulty; }
+  }catch(e){}
 }
-
-// ========== MELHOR TEMPO ==========
-function getBestTimeKey() {
-  return `zip-best-${game.difficulty}-${game.level}`;
-}
-
-function saveBestTime(seconds) {
-  try {
-    const key = getBestTimeKey();
-    const prev = parseInt(localStorage.getItem(key) || '999999', 10);
-    if (seconds < prev) {
-      localStorage.setItem(key, String(seconds));
-      return true; // novo recorde
-    }
-  } catch(e) {}
+function getBestKey() { return game.isDaily?`zip-best-daily-${getDailyKey()}`:`zip-best-${game.difficulty}-${game.level}`; }
+function saveBestTime(s) {
+  try{ const k=getBestKey(),p=parseInt(localStorage.getItem(k)||'999999',10); if(s<p){localStorage.setItem(k,String(s));return true;} }catch(e){}
   return false;
 }
-
 function getBestTime() {
-  try {
-    const val = localStorage.getItem(getBestTimeKey());
-    if (!val) return null;
-    const s = parseInt(val, 10);
-    const m = Math.floor(s / 60);
-    return `${m}:${String(s % 60).padStart(2, '0')}`;
-  } catch(e) { return null; }
+  try{ const v=localStorage.getItem(getBestKey()); if(!v) return null; const s=parseInt(v,10); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }catch(e){ return null; }
 }
+function updateBestDisplay() { const el=document.getElementById('bt'); if(el) el.textContent=getBestTime()||'—'; }
 
-function updateBestTimeDisplay() {
-  const bt = document.getElementById('bt');
-  if (!bt) return;
-  const best = getBestTime();
-  bt.textContent = best || '—';
-}
+// ═══════ CRONÔMETRO ═══════
+const timer = {
+  startMs:0, elapsed:0, intervalId:null,
+  start(){ this.startMs=Date.now()-this.elapsed; clearInterval(this.intervalId); this.intervalId=setInterval(()=>this._tick(),500); },
+  stop(){ clearInterval(this.intervalId); this.intervalId=null; this.elapsed=Date.now()-this.startMs; },
+  reset(){ clearInterval(this.intervalId); this.intervalId=null; this.elapsed=0; this.startMs=0; this._disp(0); },
+  getSeconds(){ return Math.floor(this.elapsed/1000); },
+  _tick(){ this._disp(Date.now()-this.startMs); },
+  _disp(ms){ const s=Math.floor(ms/1000),m=Math.floor(s/60),el=document.getElementById('tm'); if(!el)return; el.textContent=`${m}:${String(s%60).padStart(2,'0')}`; el.className=s>120?'v timer-warn':'v'; }
+};
 
-// ========== GERADOR HAMILTONIANO ==========
-function generateHamiltonianPath(size) {
-  const total = size * size;
-  const visited = Array.from({length: size}, () => Array(size).fill(false));
-  const path = [];
-
-  function getNeighbors(r, c) {
-    const n = [];
-    if (r > 0      && !visited[r-1][c]) n.push([r-1, c]);
-    if (r < size-1 && !visited[r+1][c]) n.push([r+1, c]);
-    if (c > 0      && !visited[r][c-1]) n.push([r, c-1]);
-    if (c < size-1 && !visited[r][c+1]) n.push([r, c+1]);
-    return n;
+// ═══════ GERADOR HAMILTONIANO ═══════
+function generateHamiltonianPath(size, rng=Math.random) {
+  const total=size*size;
+  const vis=Array.from({length:size},()=>Array(size).fill(false));
+  const path=[];
+  function dfs(r,c){
+    path.push([r,c]); vis[r][c]=true;
+    if(path.length===total) return true;
+    const nb=[];
+    if(r>0&&!vis[r-1][c]) nb.push([r-1,c]);
+    if(r<size-1&&!vis[r+1][c]) nb.push([r+1,c]);
+    if(c>0&&!vis[r][c-1]) nb.push([r,c-1]);
+    if(c<size-1&&!vis[r][c+1]) nb.push([r,c+1]);
+    for(let i=nb.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [nb[i],nb[j]]=[nb[j],nb[i]]; }
+    for(const [nr,nc] of nb){ if(dfs(nr,nc)) return true; }
+    path.pop(); vis[r][c]=false; return false;
   }
-
-  function dfs(r, c) {
-    path.push([r, c]);
-    visited[r][c] = true;
-    if (path.length === total) return true;
-
-    let neighbors = getNeighbors(r, c);
-    // Fisher-Yates shuffle para variedade
-    for (let i = neighbors.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [neighbors[i], neighbors[j]] = [neighbors[j], neighbors[i]];
-    }
-
-    for (const [nr, nc] of neighbors) {
-      if (dfs(nr, nc)) return true;
-    }
-
-    path.pop();
-    visited[r][c] = false;
-    return false;
-  }
-
-  for (let attempt = 0; attempt < 80; attempt++) {
-    const startRow = Math.floor(Math.random() * size);
-    const startCol = Math.floor(Math.random() * size);
-    if (dfs(startRow, startCol)) return path;
-    path.length = 0;
-    for (let i = 0; i < size; i++) visited[i].fill(false);
+  for(let a=0;a<80;a++){
+    const sr=Math.floor(rng()*size), sc=Math.floor(rng()*size);
+    if(dfs(sr,sc)) return path;
+    path.length=0; for(let i=0;i<size;i++) vis[i].fill(false);
   }
   return null;
 }
 
-function generatePuzzle(size, waypointDensity) {
-  const fullPath = generateHamiltonianPath(size);
-  if (!fullPath) return null;
-
-  const totalSteps = fullPath.length;
-  let waypointCount = Math.max(3, Math.floor(totalSteps * waypointDensity));
-  waypointCount = Math.min(waypointCount, Math.floor(totalSteps / 2));
-
-  const indices = [0];
-  const step = (totalSteps - 1) / (waypointCount - 1);
-  for (let i = 1; i < waypointCount - 1; i++) {
-    let idx = Math.round(i * step);
-    idx = Math.max(indices[i-1] + 2, Math.min(totalSteps - (waypointCount - i), idx));
-    indices.push(idx);
-  }
-  indices.push(totalSteps - 1);
-  const unique = [...new Set(indices)];
-
-  const numbers = {};
-  for (let i = 0; i < unique.length; i++) {
-    const [r, c] = fullPath[unique[i]];
-    numbers[`${r},${c}`] = i + 1;
-  }
-
-  return { size, numbers, fullPath, maxNumber: unique.length };
+function generatePuzzle(size, density, rng=Math.random) {
+  const fp=generateHamiltonianPath(size,rng); if(!fp) return null;
+  const total=fp.length;
+  let count=Math.max(3,Math.floor(total*density)); count=Math.min(count,Math.floor(total/2));
+  const idx=[0], step=(total-1)/(count-1);
+  for(let i=1;i<count-1;i++){ let x=Math.round(i*step); x=Math.max(idx[i-1]+2,Math.min(total-(count-i),x)); idx.push(x); }
+  idx.push(total-1);
+  const unique=[...new Set(idx)], numbers={};
+  for(let i=0;i<unique.length;i++){ const [r,c]=fp[unique[i]]; numbers[`${r},${c}`]=i+1; }
+  return { size, numbers, fullPath:fp, maxNumber:unique.length };
 }
 
-// ========== LÓGICA DO JOGO ==========
-function getNumberAt(row, col)  { return game.puzzle?.numbers[`${row},${col}`]; }
-function getPathIndex(row, col) { return game.path.findIndex(([r, c]) => r === row && c === col); }
-
-function maxVisitedNumber() {
-  let max = 0;
-  for (const [r, c] of game.path) {
-    const n = getNumberAt(r, c);
-    if (n && n > max) max = n;
-  }
-  return max;
-}
-
-// FIX: checkVictory verifica tamanho E ordem real dos waypoints no caminho percorrido
-function checkVictory() {
-  if (game.path.length !== game.size * game.size) return false;
-
-  // Verifica se todos os waypoints aparecem na ordem correta dentro do caminho
-  const sortedWaypoints = Object.entries(game.puzzle.numbers)
-    .sort(([, a], [, b]) => a - b)
-    .map(([coord]) => coord);
-
-  let lastIdx = -1;
-  for (const coord of sortedWaypoints) {
-    const [r, c] = coord.split(',').map(Number);
-    const idx = getPathIndex(r, c);
-    if (idx === -1 || idx <= lastIdx) return false;
-    lastIdx = idx;
-  }
+// ═══════ LÓGICA ═══════
+function getNumberAt(r,c){ return game.puzzle?.numbers[`${r},${c}`]; }
+function getPathIndex(r,c){ return game.path.findIndex(([pr,pc])=>pr===r&&pc===c); }
+function maxVisitedNumber(){ let max=0; for(const [r,c] of game.path){ const n=getNumberAt(r,c); if(n&&n>max) max=n; } return max; }
+function checkVictory(){
+  if(game.path.length!==game.size*game.size) return false;
+  const sorted=Object.entries(game.puzzle.numbers).sort(([,a],[,b])=>a-b).map(([k])=>k);
+  let last=-1;
+  for(const coord of sorted){ const [r,c]=coord.split(',').map(Number),i=getPathIndex(r,c); if(i===-1||i<=last) return false; last=i; }
   return true;
 }
-
-function showMessage(msg, type) {
-  const st = document.getElementById('st');
-  st.textContent = msg;
-  st.className = `status ${type}`;
-  if (type !== 'win') {
-    setTimeout(() => {
-      if (document.getElementById('st').textContent === msg) updateStatusMessage();
-    }, 2000);
-  }
+function showMessage(msg,type){ const st=document.getElementById('st'); st.textContent=msg; st.className=`status ${type}`; if(type!=='win') setTimeout(()=>{ if(st.textContent===msg) updateStatusMsg(); },2000); }
+function updateStatusMsg(){
+  const st=document.getElementById('st'); if(!st) return;
+  if(game.won){ st.textContent=`🎉 COMPLETO! VEJA O RESULTADO`; st.className='status win'; }
+  else if(game.path.length){ st.textContent=`🎯 ${game.path.length} / ${game.size*game.size} CÉLULAS`; st.className='status on'; }
+  else{ st.textContent=`🎮 NÍVEL ${game.isDaily?'📅':game.level} — CLIQUE NO 1`; st.className='status'; }
 }
 
-function updateStatusMessage() {
-  const st = document.getElementById('st');
-  if (game.won) {
-    st.textContent = `🎉 NÍVEL ${game.level} COMPLETO! PRESSIONE PRÓXIMO 🎉`;
-    st.className = 'status win';
-  } else if (game.path.length) {
-    st.textContent = `🎯 ${game.path.length} / ${game.size * game.size} CÉLULAS PREENCHIDAS`;
-    st.className = 'status on';
-  } else {
-    st.textContent = `🎮 NÍVEL ${game.level} - CLIQUE NO NÚMERO 1`;
-    st.className = 'status';
-  }
+function startDraw(row,col){
+  try{
+    if(game.won||!game.puzzle) return;
+    const num=getNumberAt(row,col); if(!num) return;
+    if(num!==1){ showMessage('❌ COMEÇE PELO NÚMERO 1!','error'); audio.error(); return; }
+    game.path=[[row,col]]; game.drawing=true; game.won=false;
+    timer.start(); audio.step(); render();
+  }catch(e){ game.drawing=false; }
 }
 
-function startDraw(row, col) {
-  try {
-    if (game.won || !game.puzzle) return;
-    const num = getNumberAt(row, col);
-    if (!num) return;
-    if (num !== 1) {
-      showMessage('❌ COMEÇE PELO NÚMERO 1!', 'error');
-      return;
-    }
-    game.path = [[row, col]];
-    game.drawing = true;
-    game.won = false;
-    // Inicia cronômetro na primeira célula
-    timer.start();
-    render();
-  } catch (err) {
-    console.error('startDraw error:', err);
-    game.drawing = false;
-  }
-}
-
-function continueDraw(row, col) {
-  try {
-    if (!game.drawing || game.won || !game.puzzle) return;
-
-    const currentMax = maxVisitedNumber();
-    if (currentMax === game.maxNumber) {
-      showMessage('⛔ VOCÊ JÁ ALCANÇOU O ÚLTIMO NÚMERO!', 'error');
-      game.drawing = false;
-      return;
-    }
-
-    const idx = getPathIndex(row, col);
-    if (idx !== -1) {
-      if (idx === game.path.length - 1) return;
-      game.path = game.path.slice(0, idx + 1);
-      render();
-      return;
-    }
-
-    if (!game.path.length) return;
-    const [lr, lc] = game.path[game.path.length - 1];
-    if (Math.abs(row - lr) + Math.abs(col - lc) !== 1) return;
-
-    const cellNum = getNumberAt(row, col);
-    const nextExpected = currentMax + 1;
-    if (cellNum && cellNum !== nextExpected) {
-      showMessage(`❌ PRÓXIMO NÚMERO DEVERIA SER ${nextExpected}!`, 'error');
-      return;
-    }
-
-    game.path.push([row, col]);
-
-    if (checkVictory()) {
-      game.won = true;
-      game.drawing = false;
-      timer.stop();
-
-      const secs = timer.getSeconds();
-      const isRecord = saveBestTime(secs);
-      updateBestTimeDisplay();
-
-      const msg = isRecord
-        ? `🏆 RECORDE! NÍVEL ${game.level} EM ${document.getElementById('tm').textContent}! 🏆`
-        : `🎉 PARABÉNS! NÍVEL ${game.level} EM ${document.getElementById('tm').textContent}! 🎉`;
-      showMessage(msg, 'win');
+function continueDraw(row,col){
+  try{
+    if(!game.drawing||game.won||!game.puzzle) return;
+    const curMax=maxVisitedNumber();
+    if(curMax===game.maxNumber){ showMessage('⛔ JÁ ALCANÇOU O ÚLTIMO NÚMERO!','error'); game.drawing=false; return; }
+    const idx=getPathIndex(row,col);
+    if(idx!==-1){ if(idx===game.path.length-1) return; game.path=game.path.slice(0,idx+1); render(); return; }
+    if(!game.path.length) return;
+    const [lr,lc]=game.path[game.path.length-1];
+    if(Math.abs(row-lr)+Math.abs(col-lc)!==1) return;
+    const cellNum=getNumberAt(row,col), nextExp=curMax+1;
+    if(cellNum&&cellNum!==nextExp){ showMessage(`❌ PRÓXIMO DEVERIA SER ${nextExp}!`,'error'); audio.error(); return; }
+    game.path.push([row,col]);
+    if(cellNum) audio.waypoint(); else audio.step();
+    if(checkVictory()){
+      game.won=true; game.drawing=false; timer.stop();
+      const secs=timer.getSeconds(), isRecord=saveBestTime(secs);
+      updateBestDisplay(); audio.win();
       saveProgress();
+      if(game.isDaily) try{ localStorage.setItem(getDailyKey(),String(secs)); }catch(e){}
+      setTimeout(()=>particles.launch(),50);
+      setTimeout(()=>showWinOverlay(secs,isRecord),650);
     }
     render();
-  } catch (err) {
-    console.error('continueDraw error:', err);
-    game.drawing = false;
-  }
+  }catch(e){ game.drawing=false; }
 }
 
-function stopDraw() { game.drawing = false; }
-
-function undo() {
-  if (game.won) return;
-  if (game.path.length) game.path.pop();
-  // Para o timer se voltou para vazio
-  if (game.path.length === 0) timer.reset();
-  render();
-  updateStatusMessage();
-}
-
-function reset() {
-  game.path = [];
-  game.won = false;
-  game.drawing = false;
-  timer.reset();
-  render();
-  showMessage('🔄 JOGO REINICIADO!', 'normal');
-}
-
-function nextLevel() {
-  const total = game.size * game.size;
-  const filled = game.path.length;
-  if (!game.won && filled > 0 && filled !== total) {
-    if (!confirm(`Nível incompleto (${filled}/${total}). Avançar mesmo assim?`)) return;
-  }
-  game.level++;
-  saveProgress();
+function stopDraw(){ game.drawing=false; }
+function undo(){ if(game.won) return; if(game.path.length) game.path.pop(); if(game.path.length===0) timer.reset(); render(); updateStatusMsg(); }
+function reset(){ particles.stop(); game.path=[]; game.won=false; game.drawing=false; timer.reset(); render(); showMessage('🔄 JOGO REINICIADO!','normal'); }
+function nextLevel(){
+  const total=game.size*game.size, filled=game.path.length;
+  if(!game.won&&filled>0&&filled!==total){ if(!confirm(`Incompleto (${filled}/${total}). Avançar mesmo assim?`)) return; }
+  closeWinOverlay(); particles.stop();
+  if(!game.isDaily){ game.level++; saveProgress(); }
   loadPuzzle();
 }
-
-function setDifficulty(diff) {
-  if (game.difficulty === diff) return;
-  game.difficulty = diff;
-  game.level = 1;
-  document.querySelectorAll('.dbtn').forEach(btn => {
-    btn.classList.toggle('on', btn.dataset.diff === diff);
-  });
-  saveProgress();
-  loadPuzzle();
-  showMessage(`📊 DIFICULDADE: ${diff.toUpperCase()}`, 'normal');
+function setDifficulty(diff){
+  if(game.difficulty===diff) return;
+  game.difficulty=diff; game.level=1;
+  document.querySelectorAll('.dbtn[data-diff]').forEach(b=>b.classList.toggle('on',b.dataset.diff===diff));
+  saveProgress(); loadPuzzle(); showMessage(`📊 DIFICULDADE: ${diff.toUpperCase()}`,'normal');
 }
 
-// ========== RENDERIZAÇÃO ==========
-// FIX: variáveis CSS lidas UMA VEZ fora dos loops, não a cada célula
-function getCSSVars() {
-  const s = getComputedStyle(document.body);
+// ═══════ WIN OVERLAY ═══════
+function showWinOverlay(secs,isRecord){
+  const m=Math.floor(secs/60), s=String(secs%60).padStart(2,'0');
+  document.getElementById('winTitle').textContent  = game.isDaily?'📅 DIÁRIO COMPLETO!':'🎉 NÍVEL '+game.level+' COMPLETO!';
+  document.getElementById('winTime').textContent   = `${m}:${s}`;
+  document.getElementById('winRecord').textContent = isRecord?'🏆 NOVO RECORDE!':'';
+  document.getElementById('winNextBtn').style.display = game.isDaily?'none':'';
+  document.getElementById('winOverlay').style.display = 'flex';
+}
+function closeWinOverlay(){ document.getElementById('winOverlay').style.display='none'; }
+
+// ═══════ RENDERIZAÇÃO ═══════
+function getCSSVars(){
+  const s=getComputedStyle(document.body);
   return {
-    cell:     s.getPropertyValue('--cell').trim()     || '#fafafa',
-    path:     s.getPropertyValue('--path').trim()     || '#a5d6a7',
-    win:      s.getPropertyValue('--win').trim()      || '#00c853',
-    border:   s.getPropertyValue('--border').trim()   || '#e0e0e0',
-    numberBg: s.getPropertyValue('--number-bg').trim()|| '#2196f3',
+    cell:     s.getPropertyValue('--cell').trim()      ||'#fafafa',
+    path:     s.getPropertyValue('--path').trim()      ||'#a5d6a7',
+    win:      s.getPropertyValue('--win').trim()       ||'#00c853',
+    border:   s.getPropertyValue('--border').trim()    ||'#e0e0e0',
+    numberBg: s.getPropertyValue('--number-bg').trim() ||'#2196f3',
   };
 }
 
-function render() {
-  if (!game.puzzle) return;
-  const size = game.size;
-  const w = size * cellSize;
-  const h = size * cellSize;
-  canvas.width  = w;
-  canvas.height = h;
-  ctx.clearRect(0, 0, w, h);
-
-  // FIX: lê CSS vars uma única vez antes dos loops
-  const vars = getCSSVars();
-
-  // Renderiza células
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
-      const x = c * cellSize, y = r * cellSize;
-      const inPath = getPathIndex(r, c) !== -1;
-
-      if      (game.won && inPath) ctx.fillStyle = vars.win;
-      else if (inPath)             ctx.fillStyle = vars.path;
-      else                         ctx.fillStyle = vars.cell;
-
-      ctx.fillRect(x, y, cellSize, cellSize);
-      ctx.strokeStyle = vars.border;
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(x, y, cellSize, cellSize);
-    }
+function render(){
+  if(!game.puzzle) return;
+  const size=game.size;
+  canvas.width=size*cellSize; canvas.height=size*cellSize;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const V=getCSSVars();
+  for(let r=0;r<size;r++) for(let c=0;c<size;c++){
+    const x=c*cellSize, y=r*cellSize, inPath=getPathIndex(r,c)!==-1;
+    ctx.fillStyle=game.won&&inPath?V.win:inPath?V.path:V.cell;
+    ctx.fillRect(x,y,cellSize,cellSize);
+    ctx.strokeStyle=V.border; ctx.lineWidth=1.5; ctx.strokeRect(x,y,cellSize,cellSize);
   }
-
-  // Renderiza números — círculo para 1 dígito, pill para 2+ dígitos
-  ctx.textAlign    = 'center';
-  ctx.textBaseline = 'middle';
-
-  for (const [coord, num] of Object.entries(game.puzzle.numbers)) {
-    const [r, c] = coord.split(',').map(Number);
-    const x = c * cellSize + cellSize / 2;
-    const y = r * cellSize + cellSize / 2;
-    const inPath  = getPathIndex(r, c) !== -1;
-    const label   = num.toString();
-    const digits  = label.length;
-
-    ctx.fillStyle = inPath ? '#2e7d32' : vars.numberBg;
-
-    if (digits === 1) {
-      // Círculo padrão
-      const radius = cellSize * 0.30;
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.font = `bold ${Math.floor(cellSize * 0.38)}px "Press Start 2P", monospace`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  for(const [coord,num] of Object.entries(game.puzzle.numbers)){
+    const [r,c]=coord.split(',').map(Number);
+    const x=c*cellSize+cellSize/2, y=r*cellSize+cellSize/2;
+    const inPath=getPathIndex(r,c)!==-1, label=num.toString(), digits=label.length;
+    ctx.fillStyle=inPath?'#2e7d32':V.numberBg;
+    if(digits===1){
+      ctx.beginPath(); ctx.arc(x,y,cellSize*.30,0,Math.PI*2); ctx.fill();
+      ctx.font=`bold ${Math.floor(cellSize*.38)}px "Press Start 2P",monospace`;
     } else {
-      // Pill: largura proporcional ao número de dígitos, altura fixa
-      const pillH = cellSize * 0.46;
-      const pillW = cellSize * (0.30 + digits * 0.19);
-      const pillR = pillH / 2;
-      const px    = x - pillW / 2;
-      const py    = y - pillH / 2;
+      const pH=cellSize*.46, pW=cellSize*(.30+digits*.19), pR=pH/2, px=x-pW/2, py=y-pH/2;
       ctx.beginPath();
-      ctx.moveTo(px + pillR, py);
-      ctx.lineTo(px + pillW - pillR, py);
-      ctx.quadraticCurveTo(px + pillW, py, px + pillW, py + pillR);
-      ctx.lineTo(px + pillW, py + pillH - pillR);
-      ctx.quadraticCurveTo(px + pillW, py + pillH, px + pillW - pillR, py + pillH);
-      ctx.lineTo(px + pillR, py + pillH);
-      ctx.quadraticCurveTo(px, py + pillH, px, py + pillH - pillR);
-      ctx.lineTo(px, py + pillR);
-      ctx.quadraticCurveTo(px, py, px + pillR, py);
-      ctx.closePath();
-      ctx.fill();
-      // Fonte menor para caber na pill
-      ctx.font = `bold ${Math.floor(cellSize * 0.27)}px "Press Start 2P", monospace`;
+      ctx.moveTo(px+pR,py); ctx.lineTo(px+pW-pR,py); ctx.quadraticCurveTo(px+pW,py,px+pW,py+pR);
+      ctx.lineTo(px+pW,py+pH-pR); ctx.quadraticCurveTo(px+pW,py+pH,px+pW-pR,py+pH);
+      ctx.lineTo(px+pR,py+pH); ctx.quadraticCurveTo(px,py+pH,px,py+pH-pR);
+      ctx.lineTo(px,py+pR); ctx.quadraticCurveTo(px,py,px+pR,py); ctx.closePath(); ctx.fill();
+      ctx.font=`bold ${Math.floor(cellSize*.27)}px "Press Start 2P",monospace`;
     }
-
-    ctx.fillStyle   = 'white';
-    ctx.shadowColor = 'rgba(0,0,0,0.3)';
-    ctx.shadowBlur  = 3;
-    ctx.fillText(label, x, y + 1);
-    ctx.shadowBlur = 0;
+    ctx.fillStyle='white'; ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=3;
+    ctx.fillText(label,x,y+1); ctx.shadowBlur=0;
   }
-
-  // Barra de progresso
-  const total   = size * size;
-  const filled  = game.path.length;
-  const percent = (filled / total) * 100;
-  const pf = document.getElementById('pf');
-  pf.style.width = `${percent}%`;
-  pf.classList.toggle('win', game.won);
-
-  document.getElementById('pt').innerText = `${filled}/${total}`;
-  document.getElementById('undoBtn').disabled = (filled === 0 || game.won);
-  updateStatusMessage();
+  const total=size*size, filled=game.path.length;
+  const pf=document.getElementById('pf');
+  pf.style.width=`${(filled/total)*100}%`; pf.classList.toggle('win',game.won);
+  document.getElementById('pt').innerText=`${filled}/${total}`;
+  document.getElementById('undoBtn').disabled=(filled===0||game.won);
+  updateStatusMsg();
 }
 
-// ========== CARREGAMENTO DE NÍVEL ==========
-// FIX: retry com contador máximo para evitar recursão infinita
-function loadPuzzle(retries = 0) {
-  const MAX_RETRIES = 8;
-  if (retries > MAX_RETRIES) {
-    showMessage('❌ ERRO CRÍTICO. Recarregue a página.', 'error');
-    return;
-  }
-
-  const cfg  = GAME_CONFIG[game.difficulty];
-  const size = cfg.sizes[Math.min(game.level - 1, cfg.sizes.length - 1)];
-  const wayDensity = cfg.waypoints;
-
-  timer.reset();
-  updateBestTimeDisplay();
-
-  showMessage(`🎲 GERANDO NÍVEL ${game.level}...`, 'normal');
-
-  // Atualiza botão de dificuldade ativo
-  document.querySelectorAll('.dbtn').forEach(btn => {
-    btn.classList.toggle('on', btn.dataset.diff === game.difficulty);
-  });
-
-  setTimeout(() => {
-    const puzzle = generatePuzzle(size, wayDensity);
-    if (!puzzle) {
-      showMessage(`❌ ERRO! Tentando novamente... (${retries + 1}/${MAX_RETRIES})`, 'error');
-      setTimeout(() => loadPuzzle(retries + 1), 150);
-      return;
-    }
-
-    game.puzzle  = puzzle;
-    game.size    = size;
-    game.path    = [];
-    game.won     = false;
-    game.drawing = false;
-    game.maxNumber = puzzle.maxNumber;
-    cellSize = CELL_SIZES[size] || 72;
-
-    document.getElementById('lv').innerText = game.level;
-    document.getElementById('gs').innerText = `${size}×${size}`;
-    document.getElementById('mk').innerText = Object.keys(puzzle.numbers).length;
-
+// ═══════ CARREGAMENTO ═══════
+function loadPuzzle(retries=0){
+  if(retries>8){ showMessage('❌ ERRO CRÍTICO. Recarregue.','error'); return; }
+  particles.stop(); timer.reset(); updateBestDisplay();
+  document.querySelectorAll('.dbtn[data-diff]').forEach(b=>b.classList.toggle('on',b.dataset.diff===game.difficulty));
+  document.getElementById('diffRow').style.display    = game.isDaily?'none':'';
+  document.getElementById('dailyBadge').style.display = game.isDaily?'':'none';
+  document.getElementById('nextBtn').style.display    = game.isDaily?'none':'';
+  showMessage(game.isDaily?'🎲 GERANDO DESAFIO DO DIA...':'🎲 GERANDO NÍVEL '+game.level+'...','normal');
+  setTimeout(()=>{
+    let puzzle;
+    if(game.isDaily){ puzzle=generatePuzzle(DAILY_CFG.size,DAILY_CFG.waypoints,createSeededRng(getDailySeed())); }
+    else{ const cfg=GAME_CONFIG[game.difficulty]; puzzle=generatePuzzle(cfg.sizes[Math.min(game.level-1,cfg.sizes.length-1)],cfg.waypoints); }
+    if(!puzzle){ showMessage(`❌ ERRO! Tentando... (${retries+1}/8)`,'error'); setTimeout(()=>loadPuzzle(retries+1),150); return; }
+    game.puzzle=puzzle; game.size=puzzle.size; game.path=[]; game.won=false; game.drawing=false; game.maxNumber=puzzle.maxNumber;
+    cellSize=CELL_SIZES[puzzle.size]||72;
+    document.getElementById('lv').innerText=game.isDaily?'📅':game.level;
+    document.getElementById('gs').innerText=`${puzzle.size}×${puzzle.size}`;
+    document.getElementById('mk').innerText=Object.keys(puzzle.numbers).length;
     render();
-  }, 10);
+  },10);
 }
 
-// ========== TEMA ==========
-function initTheme() {
-  const saved = localStorage.getItem('zip-theme');
-  if (saved === 'dark') {
-    document.body.classList.add('dark');
-    document.getElementById('themeToggle').innerHTML = '☀️ MODO CLARO';
-  } else {
-    document.body.classList.remove('dark');
-    document.getElementById('themeToggle').innerHTML = '🌙 MODO ESCURO';
-  }
+// ═══════ NAVEGAÇÃO ═══════
+function showMenu(){
+  audio.back(); particles.stop(); timer.reset(); closeWinOverlay();
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('menuScreen').style.display='';
+  refreshDailyNote();
+}
+function showGame(daily=false){
+  game.isDaily=daily; if(!daily) loadProgress();
+  document.getElementById('menuScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='';
+  document.fonts.ready.then(()=>loadPuzzle());
+}
+function refreshDailyNote(){
+  const note=document.getElementById('dailyDoneNote');
+  try{
+    const v=localStorage.getItem(getDailyKey());
+    if(v){ const s=parseInt(v,10); note.textContent=`✅ Hoje concluído em ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}!`; note.style.display=''; }
+    else note.style.display='none';
+  }catch(e){ note.style.display='none'; }
 }
 
-function toggleTheme() {
+// ═══════ TEMA ═══════
+function initTheme(){
+  const dark=localStorage.getItem('zip-theme')==='dark';
+  document.body.classList.toggle('dark',dark);
+  document.getElementById('themeToggle').textContent=dark?'☀️ CLARO':'🌙 ESCURO';
+}
+function toggleTheme(){
   document.body.classList.toggle('dark');
-  const isDark = document.body.classList.contains('dark');
-  localStorage.setItem('zip-theme', isDark ? 'dark' : 'light');
-  document.getElementById('themeToggle').innerHTML = isDark ? '☀️ MODO CLARO' : '🌙 MODO ESCURO';
-  if (game.puzzle) render();
+  const dark=document.body.classList.contains('dark');
+  localStorage.setItem('zip-theme',dark?'dark':'light');
+  document.getElementById('themeToggle').textContent=dark?'☀️ CLARO':'🌙 ESCURO';
+  if(game.puzzle) render();
 }
 
-// ========== MODAL ==========
-function setupModal() {
-  const modal = document.getElementById('howModal');
-  document.getElementById('howBtn').onclick = () => modal.style.display = 'flex';
-  document.querySelector('.close-modal').onclick = () => modal.style.display = 'none';
-  window.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+// ═══════ SOM ═══════
+function initSound(){
+  const muted=localStorage.getItem('zip-sound')==='off';
+  audio.muted=muted;
+  const btn=document.getElementById('soundToggle');
+  btn.textContent=muted?'✖ MUDO':'✔ LIGADO'; btn.classList.toggle('on',!muted);
+}
+function toggleSound(){
+  audio.muted=!audio.muted; localStorage.setItem('zip-sound',audio.muted?'off':'on');
+  const btn=document.getElementById('soundToggle');
+  btn.textContent=audio.muted?'✖ MUDO':'✔ LIGADO'; btn.classList.toggle('on',!audio.muted);
+  if(!audio.muted) audio.step();
 }
 
-// ========== EVENTOS ==========
-function setupEvents() {
-  // FIX: canvas e ctx inicializados aqui, sem redeclaração com let/const
-  canvas = document.getElementById('gc');
-  ctx    = canvas.getContext('2d');
-
-  const getCellCoord = (clientX, clientY) => {
-    const rect   = canvas.getBoundingClientRect();
-    const scaleX = canvas.width  / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const x = (clientX - rect.left) * scaleX;
-    const y = (clientY - rect.top)  * scaleY;
-    const row = Math.floor(y / cellSize);
-    const col = Math.floor(x / cellSize);
-    if (row >= 0 && row < game.size && col >= 0 && col < game.size) return [row, col];
-    return null;
+// ═══════ EVENTOS ═══════
+function setupEvents(){
+  canvas=document.getElementById('gc'); ctx=canvas.getContext('2d');
+  const getCoord=(cx,cy)=>{
+    const rect=canvas.getBoundingClientRect();
+    const col=Math.floor((cx-rect.left)*(canvas.width/rect.width)/cellSize);
+    const row=Math.floor((cy-rect.top)*(canvas.height/rect.height)/cellSize);
+    if(row>=0&&row<game.size&&col>=0&&col<game.size) return [row,col]; return null;
   };
-
-  // Mouse
-  canvas.addEventListener('mousedown', e => {
-    e.preventDefault();
-    const coord = getCellCoord(e.clientX, e.clientY);
-    if (coord) startDraw(...coord);
-  });
-  canvas.addEventListener('mousemove', e => {
-    if (!game.drawing) return;
-    const coord = getCellCoord(e.clientX, e.clientY);
-    if (coord) continueDraw(...coord);
-  });
+  canvas.addEventListener('mousedown', e=>{ e.preventDefault(); const c=getCoord(e.clientX,e.clientY); if(c) startDraw(...c); });
+  canvas.addEventListener('mousemove', e=>{ if(!game.drawing) return; const c=getCoord(e.clientX,e.clientY); if(c) continueDraw(...c); });
   canvas.addEventListener('mouseup',    stopDraw);
   canvas.addEventListener('mouseleave', stopDraw);
   window.addEventListener('mouseup',    stopDraw);
-
-  // Touch
-  canvas.addEventListener('touchstart', e => {
-    e.preventDefault();
-    const coord = getCellCoord(e.touches[0].clientX, e.touches[0].clientY);
-    if (coord) startDraw(...coord);
-  }, { passive: false });
-  canvas.addEventListener('touchmove', e => {
-    e.preventDefault();
-    if (!game.drawing) return;
-    const coord = getCellCoord(e.touches[0].clientX, e.touches[0].clientY);
-    if (coord) continueDraw(...coord);
-  }, { passive: false });
+  canvas.addEventListener('touchstart', e=>{ e.preventDefault(); const c=getCoord(e.touches[0].clientX,e.touches[0].clientY); if(c) startDraw(...c); },{passive:false});
+  canvas.addEventListener('touchmove',  e=>{ e.preventDefault(); if(!game.drawing) return; const c=getCoord(e.touches[0].clientX,e.touches[0].clientY); if(c) continueDraw(...c); },{passive:false});
   canvas.addEventListener('touchend',    stopDraw);
   canvas.addEventListener('touchcancel', stopDraw);
 
-  // Botões
-  document.getElementById('undoBtn').onclick = undo;
+  document.getElementById('undoBtn').onclick  = undo;
   document.getElementById('resetBtn').onclick = reset;
   document.getElementById('nextBtn').onclick  = nextLevel;
-  document.querySelectorAll('.dbtn').forEach(btn => {
-    btn.onclick = () => setDifficulty(btn.dataset.diff);
-  });
+  document.getElementById('menuBtn').onclick  = showMenu;
+  document.querySelectorAll('.dbtn[data-diff]').forEach(b=>{ b.onclick=()=>setDifficulty(b.dataset.diff); });
+  document.getElementById('playBtn').onclick    = ()=>showGame(false);
+  document.getElementById('dailyBtn').onclick   = ()=>showGame(true);
+  document.getElementById('howMenuBtn').onclick = ()=>{ document.getElementById('howModal').style.display='flex'; };
   document.getElementById('themeToggle').onclick = toggleTheme;
-
-  // Atalhos de teclado
-  document.addEventListener('keydown', e => {
-    if (e.key === 'z' || e.key === 'Z') undo();
-    if (e.key === 'r' || e.key === 'R') reset();
-    if (e.key === 'n' || e.key === 'N') nextLevel();
-    if (e.key === 'Escape') stopDraw();
+  document.getElementById('soundToggle').onclick = toggleSound;
+  document.getElementById('winNextBtn').onclick  = nextLevel;
+  document.getElementById('winMenuBtn').onclick  = ()=>{ closeWinOverlay(); showMenu(); };
+  const hw=document.getElementById('howModal');
+  document.querySelector('.close-modal').onclick=()=>hw.style.display='none';
+  window.addEventListener('click',e=>{ if(e.target===hw) hw.style.display='none'; });
+  document.addEventListener('keydown',e=>{
+    if(document.getElementById('gameScreen').style.display==='none') return;
+    if(e.key==='z'||e.key==='Z') undo();
+    if(e.key==='r'||e.key==='R') reset();
+    if(e.key==='n'||e.key==='N') nextLevel();
+    if(e.key==='Escape') stopDraw();
   });
 }
 
-// ========== INICIALIZAÇÃO ==========
-// FIX: document.fonts.ready garante que "Press Start 2P" esteja carregada
-//      antes de renderizar qualquer texto no canvas
-window.addEventListener('load', () => {
-  initTheme();
-  setupEvents();
-  setupModal();
-  loadProgress();  // restaura nível e dificuldade salvos
-  document.fonts.ready.then(() => {
-    loadPuzzle();
-  });
+// ═══════ INIT ═══════
+window.addEventListener('load',()=>{
+  initTheme(); initSound(); setupEvents(); refreshDailyNote();
 });
 </script>
 </body>
