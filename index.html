@@ -84,10 +84,8 @@ body{font-family:'Press Start 2P',monospace;background:var(--bg);color:var(--tex
 .screen{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:20px 16px 40px;gap:14px;width:100%;}
 
 /* ── LOGO ── */
-.logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px;}
-.logo-icon{font-size:42px;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.2));}
-.logo-text{font-size:42px;font-weight:bold;letter-spacing:6px;background:linear-gradient(135deg,var(--number-bg),#ff9800);background-clip:text;-webkit-background-clip:text;color:transparent;}
-.title-sub{font-size:8px;color:var(--text-light);letter-spacing:2px;text-align:center;margin-top:-4px;}
+#logoCanvas{display:block;max-width:100%;image-rendering:pixelated;}
+.title-sub{font-family:'Courier New',monospace;font-size:10px;font-weight:bold;color:var(--text-light);letter-spacing:6px;text-align:center;margin-top:2px;}
 
 /* ── MENU ── */
 .menu-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;margin-top:6px;}
@@ -182,12 +180,8 @@ body.dark #shareToast{background:#e0e0e0;color:#111;}
 
 <!-- ══════════════════════ MENU ══════════════════════ -->
 <div id="menuScreen" class="screen" role="main" aria-label="Menu principal">
-  <div class="logo" role="img" aria-label="ZIP Pixel Puzzle">
-    <div class="logo-icon" aria-hidden="true">🧩</div>
-    <div class="logo-text">ZIP</div>
-    <div class="logo-icon" aria-hidden="true">📦</div>
-  </div>
-  <div class="title-sub" aria-hidden="true">PIXEL PUZZLE</div>
+  <canvas id="logoCanvas" role="img" aria-label="ZIP — Pixel Puzzle"></canvas>
+  <div class="title-sub">PIXEL PUZZLE</div>
 
   <nav class="menu-btns" aria-label="Navegação principal">
     <button id="playBtn"    class="menu-btn primary" aria-label="Jogar no modo livre">▶ JOGAR</button>
@@ -817,13 +811,51 @@ function refreshDailyNote(){
   }catch(e){ note.style.display='none'; }
 }
 
+// ═══════ LOGO PIXEL ART ═══════
+function drawLogo(){
+  const lc=document.getElementById('logoCanvas');
+  if(!lc) return;
+  const mobile=window.innerWidth<=500;
+  const PX=mobile?10:14, U=PX+2, SH=mobile?3:4, LG=mobile?14:22;
+
+  const Z=[[1,1,1,1,1,1],[0,0,0,0,1,1],[0,0,0,1,1,0],[0,0,1,1,0,0],[0,1,1,0,0,0],[1,1,0,0,0,0],[1,1,1,1,1,1]];
+  const I=[[1,1,1],[0,1,0],[0,1,0],[0,1,0],[0,1,0],[0,1,0],[1,1,1]];
+  const P=[[1,1,1,1,0],[1,0,0,1,0],[1,0,0,1,0],[1,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0]];
+  const letters=[Z,I,P];
+  const dark=document.body.classList.contains('dark');
+  const cols=dark?['#e94560','#ffeb3b','#00e676']:['#c62828','#e65100','#1565c0'];
+
+  const lw=letters.map(l=>l[0].length*U-2);
+  const W=lw.reduce((a,b)=>a+b,0)+LG*(letters.length-1)+SH;
+  const H=7*U-2+SH;
+  lc.width=W; lc.height=H;
+
+  const c=lc.getContext('2d');
+  c.clearRect(0,0,W,H);
+  let ox=0;
+  letters.forEach((letter,idx)=>{
+    const col=cols[idx], w=letter[0].length;
+    c.fillStyle=dark?'rgba(0,0,0,.45)':'rgba(0,0,0,.18)';
+    for(let r=0;r<7;r++) for(let cc=0;cc<w;cc++)
+      if(letter[r][cc]) c.fillRect(ox+cc*U+SH,r*U+SH,PX,PX);
+    for(let r=0;r<7;r++) for(let cc=0;cc<w;cc++){
+      if(!letter[r][cc]) continue;
+      c.fillStyle=col; c.fillRect(ox+cc*U,r*U,PX,PX);
+      c.fillStyle='rgba(255,255,255,.28)'; c.fillRect(ox+cc*U,r*U,Math.ceil(PX*.35),Math.ceil(PX*.35));
+      c.fillStyle='rgba(0,0,0,.18)'; const d=Math.ceil(PX*.3); c.fillRect(ox+cc*U+PX-d,r*U+PX-d,d,d);
+    }
+    ox+=lw[idx]+LG;
+  });
+}
+
 // ═══════ TEMA ═══════
 function initTheme(){
   const dark=localStorage.getItem('zip-theme')==='dark';
   document.body.classList.toggle('dark',dark);
   const btn=document.getElementById('themeToggle');
   btn.textContent=dark?'☀️ CLARO':'🌙 ESCURO';
-  btn.setAttribute('aria-pressed',String(dark)); // ♿
+  btn.setAttribute('aria-pressed',String(dark));
+  drawLogo();
 }
 function toggleTheme(){
   document.body.classList.toggle('dark');
@@ -832,6 +864,7 @@ function toggleTheme(){
   const btn=document.getElementById('themeToggle');
   btn.textContent=dark?'☀️ CLARO':'🌙 ESCURO';
   btn.setAttribute('aria-pressed',String(dark)); // ♿
+  drawLogo();
   if(game.puzzle) render();
 }
 
@@ -934,6 +967,7 @@ function setupEvents(){
 // ═══════ INIT ═══════
 window.addEventListener('load',()=>{
   initTheme(); initSound(); setupEvents(); refreshDailyNote();
+  window.addEventListener('resize', drawLogo);
 });
 </script>
 </body>
