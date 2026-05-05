@@ -60,7 +60,6 @@ body{font-family:'Press Start 2P',monospace;background:var(--bg);color:var(--tex
 .menu-btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12);}
 .menu-btn:active{transform:scale(.97);}
 .menu-btn.primary{background:var(--number-bg);color:#fff;border:none;font-size:10px;padding:15px 20px;}
-.menu-btn.opts-btn{background:var(--surface);color:var(--text-light);border:1px dashed var(--border);font-size:7px;padding:10px 20px;}
 .menu-btn.daily{background:linear-gradient(135deg,#6a1b9a,#4a148c);color:#fff;border:none;}
 .menu-btn.zen-btn{background:linear-gradient(135deg,#00695c,#004d40);color:#fff;border:none;}
 .menu-btn.attack-btn{background:linear-gradient(135deg,#b71c1c,#7f0000);color:#fff;border:none;}
@@ -188,11 +187,11 @@ body.dark #shareToast,body.retro #shareToast,body.cyber #shareToast{background:#
   <div class="title-sub">PIXEL PUZZLE</div>
   <div id="streakBadge" class="streak-badge" aria-live="polite"></div>
   <nav class="menu-btns" aria-label="Navegação">
-    <button id="playBtn"    class="menu-btn primary"  >▶ JOGAR</button>
-    <button id="historyBtn" class="menu-btn"          >📜 HISTÓRICO</button>
-    <button id="achBtn"     class="menu-btn"          >🏆 CONQUISTAS</button>
-    <button id="howMenuBtn" class="menu-btn"          >❓ COMO JOGAR</button>
-    <button id="optsBtn"    class="menu-btn opts-btn" >⚙ OPÇÕES</button>
+    <button id="playBtn"    class="menu-btn primary"  >▶ Jogar</button>
+    <button id="historyBtn" class="menu-btn"          >📜 Histórico</button>
+    <button id="achBtn"     class="menu-btn"          >🏆 Conquistas</button>
+    <button id="howMenuBtn" class="menu-btn"          >❓ Como jogar</button>
+    <button id="optsBtn"    class="menu-btn"          >⚙ Opções</button>
   </nav>
   <div id="dailyDoneNote" class="daily-done-note" style="display:none" aria-live="polite"></div>
   <div class="menu-version">v3.0</div>
@@ -201,8 +200,8 @@ body.dark #shareToast,body.retro #shareToast,body.cyber #shareToast{background:#
 <!-- ══ HISTÓRICO ══ -->
 <div id="historyScreen" class="screen" style="display:none" role="main" aria-label="Histórico">
   <div class="hist-header">
-    <button id="histBackBtn" class="back-btn">⬅ MENU</button>
-    <div style="font-size:9px;">📜 HISTÓRICO</div>
+    <button id="histBackBtn" class="back-btn">⬅ Menu</button>
+    <div style="font-size:9px;">📜 Histórico</div>
   </div>
   <div id="histList" class="hist-list"></div>
 </div>
@@ -210,68 +209,68 @@ body.dark #shareToast,body.retro #shareToast,body.cyber #shareToast{background:#
 <!-- ══ JOGO ══ -->
 <div id="gameScreen" class="screen" style="display:none" role="main" aria-label="Jogo">
   <div class="game-topbar">
-    <button id="menuBtn" class="back-btn">⬅ MENU</button>
+    <button id="menuBtn" class="back-btn">⬅ Menu</button>
     <div id="modeBadge" class="mode-badge" style="display:none">—</div>
   </div>
   <div class="info-bar" role="group" aria-label="Info">
-    <div>NÍV <span class="v" id="lv">1</span></div>
-    <div>GRADE <span class="v" id="gs">—</span></div>
-    <div>MARCOS <span class="v" id="mk">—</span></div>
+    <div>Nível <span class="v" id="lv">1</span></div>
+    <div>Grade <span class="v" id="gs">—</span></div>
+    <div>Marcos <span class="v" id="mk">—</span></div>
     <div id="timerDiv">⏱ <span class="v" id="tm">0:00</span></div>
     <div id="attackDiv" style="display:none">🔥 <span id="attackCountdown">2:00</span></div>
     <div>🏆 <span class="v" id="bt">—</span></div>
   </div>
   <div class="stars-row" id="starsRow" role="img" aria-label="Estrelas"></div>
-  <div class="status" id="st" role="status" aria-live="polite">CARREGANDO...</div>
+  <div class="status" id="st" role="status" aria-live="polite">Carregando...</div>
   <div class="canvas-frame">
     <canvas id="gc" tabindex="0" aria-label="Grade do puzzle — clique no 1 e arraste"></canvas>
   </div>
   <div class="prog-wrap">
-    <div class="prog-head"><span>📊 PROGRESSO</span><span id="pt">0/0</span></div>
+    <div class="prog-head"><span>📊 Progresso</span><span id="pt">0/0</span></div>
     <div class="prog-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progBar">
       <div class="prog-fill" id="pf"></div>
     </div>
   </div>
   <div class="btn-row" role="toolbar">
-    <button id="undoBtn"  aria-label="Desfazer (Z)">↩ DESFAZER</button>
-    <button id="resetBtn" aria-label="Reiniciar (R)">🔄 REINICIAR</button>
-    <button id="nextBtn"  aria-label="Próximo (N)">⭐ PRÓXIMO</button>
+    <button id="undoBtn"  aria-label="Desfazer (Z)">↩ Desfazer</button>
+    <button id="resetBtn" aria-label="Reiniciar (R)">🔄 Reiniciar</button>
+    <button id="nextBtn"  aria-label="Próximo (N)">⭐ Próximo</button>
   </div>
   <div id="diffRow" class="diff-row" role="group" aria-label="Dificuldade">
-    <span class="diff-lbl">🎮 DIFICULDADE:</span>
-    <button class="dbtn" data-diff="easy" aria-pressed="false">FÁCIL</button>
-    <button class="dbtn" data-diff="med"  aria-pressed="false">MÉDIO</button>
-    <button class="dbtn" data-diff="hard" aria-pressed="false">DIFÍCIL</button>
+    <span class="diff-lbl">🎮 Dificuldade</span>
+    <button class="dbtn" data-diff="easy" aria-pressed="false">Fácil</button>
+    <button class="dbtn" data-diff="med"  aria-pressed="false">Médio</button>
+    <button class="dbtn" data-diff="hard" aria-pressed="false">Difícil</button>
   </div>
 </div>
 
 <!-- ══ MODAIS ══ -->
 <div id="howModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="howTitle">
   <div class="modal-content">
-    <h3 id="howTitle" style="font-size:11px;margin-bottom:10px;">📖 COMO JOGAR</h3>
+    <h3 id="howTitle" style="font-size:11px;margin-bottom:10px;">📖 Como jogar</h3>
     <p>1️⃣ Clique no <strong style="color:var(--number-bg)">1</strong> e arraste.</p>
     <p>2️⃣ Passe pelos números em <strong>ordem</strong>.</p>
     <p>3️⃣ Preencha <strong>todas</strong> as células.</p>
     <p>4️⃣ Mais rápido = mais ⭐</p>
     <p style="font-size:7px;color:var(--text-light);">Z desfaz · R reinicia · N próximo · ESC cancela<br>🧘 Zen: relaxe sem tempo · ⚡ Ataque: corra contra o relógio</p>
-    <button class="close-modal" id="howCloseBtn">FECHAR</button>
+    <button class="close-modal" id="howCloseBtn">Fechar</button>
   </div>
 </div>
 
 <div id="achModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="achTitle">
   <div class="modal-content" style="max-width:420px;">
-    <h3 id="achTitle" style="font-size:10px;margin-bottom:8px;">🏆 CONQUISTAS</h3>
+    <h3 id="achTitle" style="font-size:10px;margin-bottom:8px;">🏆 Conquistas</h3>
     <div class="ach-grid" id="achGrid"></div>
-    <button class="close-modal" id="achCloseBtn">FECHAR</button>
+    <button class="close-modal" id="achCloseBtn">Fechar</button>
   </div>
 </div>
 
 <div id="optsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="optsTitle">
   <div class="modal-content opts-modal-content">
-    <h3 id="optsTitle" style="font-size:10px;margin-bottom:2px;text-align:center;">⚙ OPÇÕES</h3>
+    <h3 id="optsTitle" style="font-size:10px;margin-bottom:2px;text-align:center;">⚙ Opções</h3>
 
     <div class="opts-section">
-      <div class="opts-section-title">🎨 TEMA</div>
+      <div class="opts-section-title">🎨 Tema</div>
       <div class="theme-row" role="group" aria-label="Selecionar tema">
         <div class="theme-dot" data-theme="light"  title="Claro"     tabindex="0" role="radio"></div>
         <div class="theme-dot" data-theme="dark"   title="Escuro"    tabindex="0" role="radio"></div>
@@ -284,57 +283,57 @@ body.dark #shareToast,body.retro #shareToast,body.cyber #shareToast{background:#
     <hr class="opts-divider">
 
     <div class="opts-section">
-      <div class="opts-section-title">🔊 SOM</div>
+      <div class="opts-section-title">🔊 Som</div>
       <div class="setting-row">
         <span class="setting-lbl">Efeitos sonoros</span>
-        <button id="soundToggle" class="dbtn on" aria-pressed="true">✔ LIGADO</button>
+        <button id="soundToggle" class="dbtn on" aria-pressed="true">✔ Ligado</button>
       </div>
     </div>
 
     <hr class="opts-divider">
 
     <div class="opts-section">
-      <div class="opts-section-title">💾 SAVE</div>
+      <div class="opts-section-title">💾 Dados</div>
       <div class="setting-row">
         <span class="setting-lbl">Exportar / Importar</span>
         <div style="display:flex;gap:6px;">
-          <button id="exportBtn" class="dbtn">⬆ EXP</button>
-          <label class="dbtn" style="cursor:pointer;" title="Importar save">⬇ IMP<input id="importInput" type="file" accept=".json" style="display:none"></label>
+          <button id="exportBtn" class="dbtn">⬆ Exportar</button>
+          <label class="dbtn" style="cursor:pointer;" title="Importar save">⬇ Importar<input id="importInput" type="file" accept=".json" style="display:none"></label>
         </div>
       </div>
     </div>
 
-    <button class="close-modal" id="optsCloseBtn" style="margin-top:18px;width:100%;">FECHAR</button>
+    <button class="close-modal" id="optsCloseBtn" style="margin-top:18px;width:100%;">Fechar</button>
   </div>
 </div>
 
 <div id="modeModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modeTitle">
   <div class="modal-content mode-modal-content">
-    <h3 id="modeTitle" style="font-size:10px;margin-bottom:4px;">▶ ESCOLHA O MODO</h3>
+    <h3 id="modeTitle" style="font-size:10px;margin-bottom:4px;">▶ Escolha o modo</h3>
     <p style="font-size:7px;color:var(--text-light);margin-bottom:16px;">Como você quer jogar hoje?</p>
     <div class="mode-grid">
       <button id="modeNormal" class="mode-card">
         <span class="mode-card-icon">🎮</span>
-        <span class="mode-card-name">NORMAL</span>
+        <span class="mode-card-name">Normal</span>
         <span class="mode-card-desc">Progrida pelos níveis no seu ritmo</span>
       </button>
       <button id="modeDaily" class="mode-card mode-card-daily">
         <span class="mode-card-icon">📅</span>
-        <span class="mode-card-name">DESAFIO DO DIA</span>
+        <span class="mode-card-name">Desafio do Dia</span>
         <span class="mode-card-desc">Um puzzle novo a cada dia</span>
       </button>
       <button id="modeZen" class="mode-card mode-card-zen">
         <span class="mode-card-icon">🧘</span>
-        <span class="mode-card-name">MODO ZEN</span>
+        <span class="mode-card-name">Modo Zen</span>
         <span class="mode-card-desc">Sem tempo, sem pressão. Relaxe.</span>
       </button>
       <button id="modeAttack" class="mode-card mode-card-attack">
         <span class="mode-card-icon">⚡</span>
-        <span class="mode-card-name">CONTRA O RELÓGIO</span>
+        <span class="mode-card-name">Contra o Relógio</span>
         <span class="mode-card-desc">2 minutos. Você consegue?</span>
       </button>
     </div>
-    <button class="close-modal" id="modeCloseBtn" style="margin-top:14px;">CANCELAR</button>
+    <button class="close-modal" id="modeCloseBtn" style="margin-top:14px;">Cancelar</button>
   </div>
 </div>
 
@@ -342,22 +341,22 @@ body.dark #shareToast,body.retro #shareToast,body.cyber #shareToast{background:#
   <div class="modal-content">
     <p id="confirmMsg" style="line-height:2;"></p>
     <div class="confirm-btns">
-      <button id="confirmYes" class="btn-confirm-yes">✔ SIM</button>
-      <button id="confirmNo"  class="btn-confirm-no" >✖ NÃO</button>
+      <button id="confirmYes" class="btn-confirm-yes">✔ Sim</button>
+      <button id="confirmNo"  class="btn-confirm-no" >✖ Não</button>
     </div>
   </div>
 </div>
 
 <div id="winOverlay" role="dialog" aria-modal="true" aria-labelledby="winTitle">
   <div class="win-card">
-    <div class="win-title"  id="winTitle">🎉 COMPLETO!</div>
+    <div class="win-title"  id="winTitle">🎉 Completo!</div>
     <div class="win-time"   id="winTime" >0:00</div>
     <div class="win-stars"  id="winStars"></div>
     <div class="win-record" id="winRecord"></div>
     <div class="win-btns">
-      <button id="winNextBtn"  class="btn-y"    >⭐ PRÓXIMO</button>
-      <button id="winShareBtn" class="btn-share" style="display:none">📤 SHARE</button>
-      <button id="winMenuBtn"                   >🏠 MENU</button>
+      <button id="winNextBtn"  class="btn-y"    >⭐ Próximo</button>
+      <button id="winShareBtn" class="btn-share" style="display:none">📤 Compartilhar</button>
+      <button id="winMenuBtn"                   >🏠 Menu</button>
     </div>
   </div>
 </div>
@@ -367,7 +366,7 @@ body.dark #shareToast,body.retro #shareToast,body.cyber #shareToast{background:#
   <div id="tutBubble"    class="tut-bubble"    style="display:none">
     <div class="tut-step" id="tutStep"></div>
     <div id="tutText"></div>
-    <button class="tut-skip" id="tutSkip">PULAR</button>
+    <button class="tut-skip" id="tutSkip">Pular</button>
   </div>
 </div>
 
@@ -525,7 +524,7 @@ const attackTimer={
   reset(){this.stop();this.remaining=ATTACK_TIME;this._update();},
   _update(){const el=document.getElementById('attackCountdown');if(el){el.textContent=fmtTime(this.remaining);el.style.color=this.remaining<=30?'var(--error)':'var(--win)';}}
 };
-function _onAttackExpire(){if(game.won)return;audio.error();showMessage('⏰ TEMPO ESGOTADO!','error');game.drawing=false;setTimeout(()=>showConfirm('Tentar novamente?',()=>loadPuzzle(),()=>{}),1000);}
+function _onAttackExpire(){if(game.won)return;audio.error();showMessage('⏰ Tempo esgotado!','error');game.drawing=false;setTimeout(()=>showConfirm('Tentar novamente?',()=>loadPuzzle(),()=>{}),1000);}
 
 // ── GERADOR ──
 function generateHamiltonianPath(size,rng=Math.random){
@@ -575,16 +574,16 @@ function checkVictory(){
 function showMessage(msg,type){const st=document.getElementById('st');st.textContent=msg;st.className=`status ${type}`;if(type!=='win')setTimeout(()=>{if(st.textContent===msg)updateStatusMsg();},2000);}
 function updateStatusMsg(){
   const st=document.getElementById('st');if(!st)return;
-  if(game.won){st.textContent='🎉 COMPLETO!';st.className='status win';}
-  else if(game.path.length){st.textContent=`🎯 ${game.path.length}/${game.size*game.size} CÉLULAS`;st.className='status on';}
-  else{const badge=game.isDaily?'📅':game.mode==='zen'?'🧘':game.mode==='attack'?'⚡':'NÍV.'+game.level;st.textContent=`🎮 ${badge} — CLIQUE NO 1`;st.className='status';}
+  if(game.won){st.textContent='🎉 Completo!';st.className='status win';}
+  else if(game.path.length){st.textContent=`🎯 ${game.path.length}/${game.size*game.size} células`;st.className='status on';}
+  else{const badge=game.isDaily?'📅':game.mode==='zen'?'🧘':game.mode==='attack'?'⚡':'Nível '+game.level;st.textContent=`🎮 ${badge} — Clique no 1`;st.className='status';}
 }
 
 function startDraw(row,col){
   try{
     if(game.won||!game.puzzle)return;
     const num=getNumberAt(row,col);if(!num)return;
-    if(num!==1){showMessage('❌ COMEÇE PELO NÚMERO 1!','error');audio.error();return;}
+    if(num!==1){showMessage('❌ Comece pelo número 1!','error');audio.error();return;}
     game.path=[[row,col]];game.pathSet=new Set([`${row},${col}`]);
     game.drawing=true;game.won=false;game.undoUsed=false;
     timer.start();if(game.mode==='attack')attackTimer.start();
@@ -599,7 +598,7 @@ function continueDraw(row,col){
     if(!game.path.length)return;
     const[lr,lc]=game.path[game.path.length-1];if(Math.abs(row-lr)+Math.abs(col-lc)!==1)return;
     const cellNum=getNumberAt(row,col),curMax=maxVisitedNumber();
-    if(cellNum&&cellNum!==curMax+1){showMessage(`❌ PRÓXIMO: ${curMax+1}!`,'error');audio.error();return;}
+    if(cellNum&&cellNum!==curMax+1){showMessage(`❌ Próximo: ${curMax+1}!`,'error');audio.error();return;}
     game.path.push([row,col]);game.pathSet.add(`${row},${col}`);
     if(cellNum)audio.waypoint();else audio.step();
     if(game.path.length===2)advanceTutorial('moved');
@@ -622,7 +621,7 @@ function continueDraw(row,col){
 function stopDraw(){game.drawing=false;}
 function checkAllDiffAch(){try{const h=getHistory(),d=new Set(h.map(x=>x.difficulty));if(d.has('easy')&&d.has('med')&&d.has('hard'))tryUnlock('allDiff');}catch(e){}}
 function undo(){if(game.won)return;if(game.path.length){const r=game.path.pop();if(r)game.pathSet.delete(`${r[0]},${r[1]}`);game.undoUsed=true;}if(!game.path.length)timer.reset();scheduleRender();updateStatusMsg();}
-function reset(){particles.stop();game.path=[];game.pathSet=new Set();game.won=false;game.drawing=false;timer.reset();if(game.mode==='attack')attackTimer.reset();scheduleRender();showMessage('🔄 REINICIADO!','normal');}
+function reset(){particles.stop();game.path=[];game.pathSet=new Set();game.won=false;game.drawing=false;timer.reset();if(game.mode==='attack')attackTimer.reset();scheduleRender();showMessage('🔄 Reiniciado!','normal');}
 function nextLevel(){const total=game.size*game.size,filled=game.path.length;if(!game.won&&filled>0&&filled!==total){showConfirm(`Incompleto (${filled}/${total}). Avançar?`,_doNextLevel,()=>{});return;}_doNextLevel();}
 function _doNextLevel(){closeWinOverlay();particles.stop();if(!game.isDaily)game.level++;saveProgress();loadPuzzle();}
 function setDifficulty(diff){if(game.difficulty===diff)return;game.difficulty=diff;game.level=1;document.querySelectorAll('.dbtn[data-diff]').forEach(b=>{const on=b.dataset.diff===diff;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});saveProgress();loadPuzzle();}
@@ -661,10 +660,10 @@ function importSave(file){
 
 // ── WIN OVERLAY ──
 function showWinOverlay(secs,isRecord,stars){
-  document.getElementById('winTitle').textContent=game.isDaily?'📅 DIÁRIO!':game.mode==='zen'?'🧘 ZEN!':game.mode==='attack'?'⚡ ATAQUE!':'🎉 NÍV.'+game.level;
+  document.getElementById('winTitle').textContent=game.isDaily?'📅 Diário!':game.mode==='zen'?'🧘 Zen!':game.mode==='attack'?'⚡ Ataque!':'🎉 Nível '+game.level;
   document.getElementById('winTime').textContent=fmtTime(secs);
   document.getElementById('winStars').textContent=starsEmoji(stars);
-  document.getElementById('winRecord').textContent=isRecord?'🏆 NOVO RECORDE!':'';
+  document.getElementById('winRecord').textContent=isRecord?'🏆 Novo recorde!':'';
   document.getElementById('winNextBtn').style.display=(game.isDaily||game.mode!=='normal')?'none':'';
   document.getElementById('winShareBtn').style.display=game.isDaily?'':'none';
   document.getElementById('winOverlay').style.display='flex';
@@ -731,12 +730,12 @@ function render(entrElapsed=null,cellElapsed=null){
 
 // ── CARREGAMENTO ──
 function loadPuzzle(retries=0){
-  if(retries>8){showMessage('❌ ERRO CRÍTICO.','error');return;}
+  if(retries>8){showMessage('❌ Erro crítico.','error');return;}
   particles.stop();timer.reset();attackTimer.reset();updateBestDisplay();
   const badge=document.getElementById('modeBadge');
-  if(game.isDaily){badge.textContent='📅 DIÁRIO';badge.className='mode-badge daily';badge.style.display='';}
-  else if(game.mode==='zen'){badge.textContent='🧘 ZEN';badge.className='mode-badge zen';badge.style.display='';}
-  else if(game.mode==='attack'){badge.textContent='⚡ ATAQUE';badge.className='mode-badge attack';badge.style.display='';}
+  if(game.isDaily){badge.textContent='📅 Diário';badge.className='mode-badge daily';badge.style.display='';}
+  else if(game.mode==='zen'){badge.textContent='🧘 Zen';badge.className='mode-badge zen';badge.style.display='';}
+  else if(game.mode==='attack'){badge.textContent='⚡ Ataque';badge.className='mode-badge attack';badge.style.display='';}
   else badge.style.display='none';
   document.querySelectorAll('.dbtn[data-diff]').forEach(b=>{const on=b.dataset.diff===game.difficulty;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});
   document.getElementById('diffRow').style.display=(game.isDaily||game.mode!=='normal')?'none':'';
@@ -744,16 +743,16 @@ function loadPuzzle(retries=0){
   document.getElementById('timerDiv').style.display=game.mode==='attack'?'none':'';
   document.getElementById('attackDiv').style.display=game.mode==='attack'?'':'none';
   document.getElementById('starsRow').innerHTML='';
-  showMessage('🎲 GERANDO...','normal');
+  showMessage('🎲 Gerando...','normal');
   const cfg=game.isDaily?DAILY_CFG:GAME_CONFIG[game.difficulty];
   const size=game.isDaily?cfg.size:cfg.sizes[Math.min(game.level-1,cfg.sizes.length-1)];
   const density=cfg.waypoints,seed=game.isDaily?getDailySeed():undefined;
   const ck=`${game.difficulty}-${game.level}`;
   if(!game.isDaily&&puzzleCache.has(ck)){const cached=puzzleCache.get(ck);puzzleCache.delete(ck);_applyPuzzle(cached);precacheNext();return;}
   if(typeof Worker!=='undefined'){
-    try{const w=createPuzzleWorker();w.onmessage=e=>{w.terminate();if(!e.data){showMessage(`❌ ERRO (${retries+1}/8)`,'error');setTimeout(()=>loadPuzzle(retries+1),150);return;}_applyPuzzle(e.data);precacheNext();};w.onerror=()=>{w.terminate();setTimeout(()=>loadPuzzle(retries+1),150);};w.postMessage({size,density,seed});return;}catch(e){}
+    try{const w=createPuzzleWorker();w.onmessage=e=>{w.terminate();if(!e.data){showMessage(`❌ Erro (${retries+1}/8)`,'error');setTimeout(()=>loadPuzzle(retries+1),150);return;}_applyPuzzle(e.data);precacheNext();};w.onerror=()=>{w.terminate();setTimeout(()=>loadPuzzle(retries+1),150);};w.postMessage({size,density,seed});return;}catch(e){}
   }
-  setTimeout(()=>{const rng=seed!=null?createSeededRng(seed):Math.random;const puzzle=generatePuzzle(size,density,rng);if(!puzzle){showMessage(`❌ ERRO (${retries+1}/8)`,'error');setTimeout(()=>loadPuzzle(retries+1),150);return;}_applyPuzzle(puzzle);precacheNext();},10);
+  setTimeout(()=>{const rng=seed!=null?createSeededRng(seed):Math.random;const puzzle=generatePuzzle(size,density,rng);if(!puzzle){showMessage(`❌ Erro (${retries+1}/8)`,'error');setTimeout(()=>loadPuzzle(retries+1),150);return;}_applyPuzzle(puzzle);precacheNext();},10);
 }
 function _applyPuzzle(puzzle){
   game.puzzle=puzzle;game.size=puzzle.size;game.path=[];game.pathSet=new Set();game.won=false;game.drawing=false;game.maxNumber=puzzle.maxNumber;game.undoUsed=false;
@@ -776,7 +775,7 @@ function startTutorial(){tutStep=0;document.getElementById('tutorialOverlay').st
 function advanceTutorial(trigger){if(tutStep<0||tutStep>=TUT_STEPS.length)return;if(TUT_STEPS[tutStep].trigger===trigger){tutStep++;if(tutStep>=TUT_STEPS.length){endTutorial();return;}_showTutStep(tutStep);}}
 function _showTutStep(i){
   const step=TUT_STEPS[i],bubble=document.getElementById('tutBubble');
-  document.getElementById('tutStep').textContent=`PASSO ${i+1}/${TUT_STEPS.length}`;
+  document.getElementById('tutStep').textContent=`Passo ${i+1}/${TUT_STEPS.length}`;
   document.getElementById('tutText').textContent=step.text;
   bubble.style.display='block';
   const frame=document.querySelector('.canvas-frame');
@@ -824,8 +823,8 @@ function applyTheme(t,save=true){
 }
 
 // ── SOM ──
-function initSound(){const m=localStorage.getItem('zip-sound')==='off';audio.muted=m;const btn=document.getElementById('soundToggle');btn.textContent=m?'✖ MUDO':'✔ LIGADO';btn.classList.toggle('on',!m);btn.setAttribute('aria-pressed',String(!m));}
-function toggleSound(){audio.muted=!audio.muted;localStorage.setItem('zip-sound',audio.muted?'off':'on');const btn=document.getElementById('soundToggle');btn.textContent=audio.muted?'✖ MUDO':'✔ LIGADO';btn.classList.toggle('on',!audio.muted);btn.setAttribute('aria-pressed',String(!audio.muted));if(!audio.muted)audio.step();}
+function initSound(){const m=localStorage.getItem('zip-sound')==='off';audio.muted=m;const btn=document.getElementById('soundToggle');btn.textContent=m?'✖ Mudo':'✔ Ligado';btn.classList.toggle('on',!m);btn.setAttribute('aria-pressed',String(!m));}
+function toggleSound(){audio.muted=!audio.muted;localStorage.setItem('zip-sound',audio.muted?'off':'on');const btn=document.getElementById('soundToggle');btn.textContent=audio.muted?'✖ Mudo':'✔ Ligado';btn.classList.toggle('on',!audio.muted);btn.setAttribute('aria-pressed',String(!audio.muted));if(!audio.muted)audio.step();}
 
 // ── EVENTOS ──
 function setupMenuKeyNav(id){const el=document.getElementById(id);if(!el)return;el.addEventListener('keydown',e=>{const fw=e.key==='ArrowRight'||e.key==='ArrowDown',bk=e.key==='ArrowLeft'||e.key==='ArrowUp';if(!fw&&!bk)return;e.preventDefault();const btns=[...el.querySelectorAll('button:not([disabled])')];const i=btns.indexOf(document.activeElement);if(i===-1)return;btns[(i+(fw?1:-1)+btns.length)%btns.length].focus();});}
