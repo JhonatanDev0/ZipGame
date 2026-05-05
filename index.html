@@ -55,11 +55,12 @@ body{font-family:'Press Start 2P',monospace;background:var(--bg);color:var(--tex
 .screen{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:20px 16px 40px;gap:12px;width:100%;}
 #logoCanvas{display:block;max-width:100%;image-rendering:pixelated;}
 .title-sub{font-family:'Courier New',monospace;font-size:10px;font-weight:bold;color:var(--text-light);letter-spacing:6px;text-align:center;margin-top:2px;}
-.menu-btns{display:flex;flex-direction:column;gap:9px;width:100%;max-width:300px;margin-top:4px;}
+.menu-btns{display:flex;flex-direction:column;gap:9px;width:100%;max-width:320px;margin-top:4px;}
 .menu-btn{font-family:'Press Start 2P',monospace;font-size:8px;padding:13px 20px;cursor:pointer;border:none;border-radius:13px;transition:all .2s;background:var(--surface);color:var(--text);border:1px solid var(--border);width:100%;}
 .menu-btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12);}
 .menu-btn:active{transform:scale(.97);}
-.menu-btn.primary{background:var(--number-bg);color:#fff;border:none;font-size:10px;}
+.menu-btn.primary{background:var(--number-bg);color:#fff;border:none;font-size:10px;padding:15px 20px;}
+.menu-btn.opts-btn{background:var(--surface);color:var(--text-light);border:1px dashed var(--border);font-size:7px;padding:10px 20px;}
 .menu-btn.daily{background:linear-gradient(135deg,#6a1b9a,#4a148c);color:#fff;border:none;}
 .menu-btn.zen-btn{background:linear-gradient(135deg,#00695c,#004d40);color:#fff;border:none;}
 .menu-btn.attack-btn{background:linear-gradient(135deg,#b71c1c,#7f0000);color:#fff;border:none;}
@@ -78,7 +79,7 @@ body.cyber .menu-btn.daily,body.retro .menu-btn.daily{background:linear-gradient
 .theme-dot[data-theme="retro"]{background:#0a0a0a;box-shadow:0 0 6px #00aa00;}
 .theme-dot[data-theme="sepia"]{background:#f4efe6;border:3px solid #c8a97a;}
 .theme-dot[data-theme="cyber"]{background:#0d0d1a;box-shadow:0 0 6px #ff00ff;}
-.game-topbar{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:580px;}
+.game-topbar{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:640px;}
 .back-btn{font-family:'Press Start 2P',monospace;font-size:7px;padding:8px 14px;cursor:pointer;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);transition:all .2s;}
 .back-btn:hover{background:var(--border);}
 .mode-badge{font-size:7px;padding:6px 12px;border-radius:10px;color:#fff;animation:pulse 2s ease-in-out infinite;}
@@ -102,7 +103,7 @@ body.cyber .menu-btn.daily,body.retro .menu-btn.daily{background:linear-gradient
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
 .canvas-frame{background:var(--surface);border:4px solid var(--border);border-radius:20px;padding:12px;box-shadow:0 8px 20px rgba(0,0,0,.1);display:inline-block;}
 canvas#gc{display:block;cursor:crosshair;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.1);max-width:100%;}
-.prog-wrap{width:100%;max-width:550px;}
+.prog-wrap{width:100%;max-width:600px;}
 .prog-head{display:flex;justify-content:space-between;font-size:7px;margin-bottom:6px;color:var(--text-light);}
 .prog-track{height:14px;background:var(--border);border-radius:8px;overflow:hidden;}
 .prog-fill{height:100%;background:var(--path-dark);transition:width .15s;}
@@ -143,6 +144,24 @@ body.dark #shareToast,body.retro #shareToast,body.cyber #shareToast{background:#
 .ach-icon{font-size:18px;margin-bottom:4px;}
 .ach-name{font-size:6px;color:var(--text);line-height:1.6;font-weight:bold;}
 .ach-desc{font-size:6px;color:var(--text-light);margin-top:2px;}
+.mode-modal-content{width:360px;max-width:94%;}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
+.mode-card{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 10px;border-radius:14px;cursor:pointer;border:2px solid var(--border);background:var(--bg);color:var(--text);font-family:'Press Start 2P',monospace;transition:all .18s;text-align:center;}
+.mode-card:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.18);border-color:var(--number-bg);}
+.mode-card:active{transform:scale(.96);}
+.mode-card-icon{font-size:22px;}
+.mode-card-name{font-size:6.5px;font-weight:bold;color:var(--text);line-height:1.5;}
+.mode-card-desc{font-size:5.5px;color:var(--text-light);line-height:1.7;font-family:'Courier New',monospace;}
+.mode-card-daily{border-color:#6a1b9a;background:linear-gradient(135deg,rgba(106,27,154,.12),rgba(74,20,140,.06));}
+.mode-card-daily:hover{border-color:#9c27b0;background:linear-gradient(135deg,rgba(106,27,154,.22),rgba(74,20,140,.14));}
+.mode-card-zen{border-color:#00695c;background:linear-gradient(135deg,rgba(0,105,92,.12),rgba(0,77,64,.06));}
+.mode-card-zen:hover{border-color:#00897b;background:linear-gradient(135deg,rgba(0,105,92,.22),rgba(0,77,64,.14));}
+.mode-card-attack{border-color:#b71c1c;background:linear-gradient(135deg,rgba(183,28,28,.12),rgba(127,0,0,.06));}
+.mode-card-attack:hover{border-color:#e53935;background:linear-gradient(135deg,rgba(183,28,28,.22),rgba(127,0,0,.14));}
+.opts-modal-content{width:340px;max-width:94%;text-align:left;}
+.opts-section{margin-top:14px;}
+.opts-section-title{font-size:7px;color:var(--text-light);margin-bottom:10px;letter-spacing:2px;}
+.opts-divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
 .hist-header{display:flex;align-items:center;gap:14px;width:100%;max-width:580px;}
 .hist-list{width:100%;max-width:500px;display:flex;flex-direction:column;gap:9px;}
 .hist-item{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:all .2s;}
@@ -170,36 +189,11 @@ body.dark #shareToast,body.retro #shareToast,body.cyber #shareToast{background:#
   <div id="streakBadge" class="streak-badge" aria-live="polite"></div>
   <nav class="menu-btns" aria-label="Navegação">
     <button id="playBtn"    class="menu-btn primary"  >▶ JOGAR</button>
-    <button id="dailyBtn"   class="menu-btn daily"    >📅 DESAFIO DO DIA</button>
-    <button id="zenBtn"     class="menu-btn zen-btn"  >🧘 MODO ZEN</button>
-    <button id="attackBtn"  class="menu-btn attack-btn">⚡ CONTRA O RELÓGIO</button>
     <button id="historyBtn" class="menu-btn"          >📜 HISTÓRICO</button>
     <button id="achBtn"     class="menu-btn"          >🏆 CONQUISTAS</button>
     <button id="howMenuBtn" class="menu-btn"          >❓ COMO JOGAR</button>
+    <button id="optsBtn"    class="menu-btn opts-btn" >⚙ OPÇÕES</button>
   </nav>
-  <div class="menu-settings" role="region" aria-label="Configurações">
-    <div class="setting-row">
-      <span class="setting-lbl">🎨 TEMA</span>
-      <div class="theme-row" role="group" aria-label="Selecionar tema">
-        <div class="theme-dot" data-theme="light"  title="Claro"     tabindex="0" role="radio"></div>
-        <div class="theme-dot" data-theme="dark"   title="Escuro"    tabindex="0" role="radio"></div>
-        <div class="theme-dot" data-theme="retro"  title="Retrô"     tabindex="0" role="radio"></div>
-        <div class="theme-dot" data-theme="sepia"  title="Sépia"     tabindex="0" role="radio"></div>
-        <div class="theme-dot" data-theme="cyber"  title="Cyberpunk" tabindex="0" role="radio"></div>
-      </div>
-    </div>
-    <div class="setting-row">
-      <span class="setting-lbl">🔊 SOM</span>
-      <button id="soundToggle" class="dbtn on" aria-pressed="true">✔ LIGADO</button>
-    </div>
-    <div class="setting-row">
-      <span class="setting-lbl">💾 SAVE</span>
-      <div style="display:flex;gap:6px;">
-        <button id="exportBtn" class="dbtn">⬆ EXP</button>
-        <label class="dbtn" style="cursor:pointer;" title="Importar save">⬇ IMP<input id="importInput" type="file" accept=".json" style="display:none"></label>
-      </div>
-    </div>
-  </div>
   <div id="dailyDoneNote" class="daily-done-note" style="display:none" aria-live="polite"></div>
   <div class="menu-version">v3.0</div>
 </div>
@@ -272,6 +266,78 @@ body.dark #shareToast,body.retro #shareToast,body.cyber #shareToast{background:#
   </div>
 </div>
 
+<div id="optsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="optsTitle">
+  <div class="modal-content opts-modal-content">
+    <h3 id="optsTitle" style="font-size:10px;margin-bottom:2px;text-align:center;">⚙ OPÇÕES</h3>
+
+    <div class="opts-section">
+      <div class="opts-section-title">🎨 TEMA</div>
+      <div class="theme-row" role="group" aria-label="Selecionar tema">
+        <div class="theme-dot" data-theme="light"  title="Claro"     tabindex="0" role="radio"></div>
+        <div class="theme-dot" data-theme="dark"   title="Escuro"    tabindex="0" role="radio"></div>
+        <div class="theme-dot" data-theme="retro"  title="Retrô"     tabindex="0" role="radio"></div>
+        <div class="theme-dot" data-theme="sepia"  title="Sépia"     tabindex="0" role="radio"></div>
+        <div class="theme-dot" data-theme="cyber"  title="Cyberpunk" tabindex="0" role="radio"></div>
+      </div>
+    </div>
+
+    <hr class="opts-divider">
+
+    <div class="opts-section">
+      <div class="opts-section-title">🔊 SOM</div>
+      <div class="setting-row">
+        <span class="setting-lbl">Efeitos sonoros</span>
+        <button id="soundToggle" class="dbtn on" aria-pressed="true">✔ LIGADO</button>
+      </div>
+    </div>
+
+    <hr class="opts-divider">
+
+    <div class="opts-section">
+      <div class="opts-section-title">💾 SAVE</div>
+      <div class="setting-row">
+        <span class="setting-lbl">Exportar / Importar</span>
+        <div style="display:flex;gap:6px;">
+          <button id="exportBtn" class="dbtn">⬆ EXP</button>
+          <label class="dbtn" style="cursor:pointer;" title="Importar save">⬇ IMP<input id="importInput" type="file" accept=".json" style="display:none"></label>
+        </div>
+      </div>
+    </div>
+
+    <button class="close-modal" id="optsCloseBtn" style="margin-top:18px;width:100%;">FECHAR</button>
+  </div>
+</div>
+
+<div id="modeModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modeTitle">
+  <div class="modal-content mode-modal-content">
+    <h3 id="modeTitle" style="font-size:10px;margin-bottom:4px;">▶ ESCOLHA O MODO</h3>
+    <p style="font-size:7px;color:var(--text-light);margin-bottom:16px;">Como você quer jogar hoje?</p>
+    <div class="mode-grid">
+      <button id="modeNormal" class="mode-card">
+        <span class="mode-card-icon">🎮</span>
+        <span class="mode-card-name">NORMAL</span>
+        <span class="mode-card-desc">Progrida pelos níveis no seu ritmo</span>
+      </button>
+      <button id="modeDaily" class="mode-card mode-card-daily">
+        <span class="mode-card-icon">📅</span>
+        <span class="mode-card-name">DESAFIO DO DIA</span>
+        <span class="mode-card-desc">Um puzzle novo a cada dia</span>
+      </button>
+      <button id="modeZen" class="mode-card mode-card-zen">
+        <span class="mode-card-icon">🧘</span>
+        <span class="mode-card-name">MODO ZEN</span>
+        <span class="mode-card-desc">Sem tempo, sem pressão. Relaxe.</span>
+      </button>
+      <button id="modeAttack" class="mode-card mode-card-attack">
+        <span class="mode-card-icon">⚡</span>
+        <span class="mode-card-name">CONTRA O RELÓGIO</span>
+        <span class="mode-card-desc">2 minutos. Você consegue?</span>
+      </button>
+    </div>
+    <button class="close-modal" id="modeCloseBtn" style="margin-top:14px;">CANCELAR</button>
+  </div>
+</div>
+
 <div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmMsg">
   <div class="modal-content">
     <p id="confirmMsg" style="line-height:2;"></p>
@@ -313,7 +379,7 @@ body.dark #shareToast,body.retro #shareToast,body.cyber #shareToast{background:#
 "use strict";
 
 // ── CONFIG ──
-const CELL_SIZES={4:110,5:94,6:82,7:72};
+const CELL_SIZES={4:124,5:106,6:92,7:80};
 const GAME_CONFIG={
   easy:{sizes:[4,4,4,5,5,5,5,6,6,6],waypoints:0.35},
   med: {sizes:[5,5,5,6,6,6,6,7,7,7],waypoints:0.28},
@@ -776,10 +842,14 @@ function setupEvents(){
 
   document.getElementById('undoBtn').onclick=undo;document.getElementById('resetBtn').onclick=reset;document.getElementById('nextBtn').onclick=nextLevel;document.getElementById('menuBtn').onclick=showMenu;
   document.querySelectorAll('.dbtn[data-diff]').forEach(b=>b.onclick=()=>setDifficulty(b.dataset.diff));
-  document.getElementById('playBtn').onclick   =()=>showGame('normal',false);
-  document.getElementById('dailyBtn').onclick  =()=>showGame('normal',true);
-  document.getElementById('zenBtn').onclick    =()=>showGame('zen',false);
-  document.getElementById('attackBtn').onclick =()=>showGame('attack',false);
+  document.getElementById('optsBtn').onclick    =()=>{document.getElementById('optsModal').style.display='flex';document.getElementById('optsCloseBtn').focus();};
+  document.getElementById('optsCloseBtn').onclick=()=>document.getElementById('optsModal').style.display='none';
+  document.getElementById('playBtn').onclick   =()=>{document.getElementById('modeModal').style.display='flex';document.getElementById('modeNormal').focus();};
+  document.getElementById('modeNormal').onclick =()=>{document.getElementById('modeModal').style.display='none';showGame('normal',false);};
+  document.getElementById('modeDaily').onclick  =()=>{document.getElementById('modeModal').style.display='none';showGame('normal',true);};
+  document.getElementById('modeZen').onclick    =()=>{document.getElementById('modeModal').style.display='none';showGame('zen',false);};
+  document.getElementById('modeAttack').onclick =()=>{document.getElementById('modeModal').style.display='none';showGame('attack',false);};
+  document.getElementById('modeCloseBtn').onclick=()=>document.getElementById('modeModal').style.display='none';
   document.getElementById('historyBtn').onclick=showHistoryScreen;
   document.getElementById('histBackBtn').onclick=showMenu;
   document.getElementById('achBtn').onclick    =()=>{renderAchModal();document.getElementById('achModal').style.display='flex';document.getElementById('achCloseBtn').focus();};
@@ -792,10 +862,12 @@ function setupEvents(){
   document.getElementById('importInput').onchange=e=>importSave(e.target.files[0]);
   document.getElementById('tutSkip').onclick=endTutorial;
   document.querySelectorAll('.theme-dot').forEach(d=>{d.onclick=()=>applyTheme(d.dataset.theme);d.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')applyTheme(d.dataset.theme);});});
-  ['howModal','achModal'].forEach(id=>{const m=document.getElementById(id);m.addEventListener('click',e=>{if(e.target===m)m.style.display='none';});});
+  ['howModal','achModal','modeModal','optsModal'].forEach(id=>{const m=document.getElementById(id);m.addEventListener('click',e=>{if(e.target===m)m.style.display='none';});});
   const cm=document.getElementById('confirmModal');cm.addEventListener('click',e=>{if(e.target===cm)cm.style.display='none';});
   document.addEventListener('keydown',e=>{
     if(cm.style.display==='flex'){if(e.key==='Escape')cm.style.display='none';if(e.key==='Enter')document.getElementById('confirmYes').click();return;}
+    const mm=document.getElementById('modeModal');if(mm.style.display==='flex'){if(e.key==='Escape')mm.style.display='none';return;}
+    const om=document.getElementById('optsModal');if(om.style.display==='flex'){if(e.key==='Escape')om.style.display='none';return;}
     if(document.getElementById('gameScreen').style.display==='none')return;
     if(e.key==='z'||e.key==='Z')undo();if(e.key==='r'||e.key==='R')reset();if(e.key==='n'||e.key==='N')nextLevel();if(e.key==='Escape'){stopDraw();endTutorial();}
   });
